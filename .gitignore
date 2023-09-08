@@ -1,0 +1,22 @@
+﻿
+# ignore the settings folder and files for VSCode and PSS
+.vscode/*
+*.psproj
+*TempPoint*
+
+# Ignore staging info from Visual Studio
+library/ServiceManagementAutomationX/.vs/*
+library/ServiceManagementAutomationX/ServiceManagementAutomationX/bin/*
+library/ServiceManagementAutomationX/ServiceManagementAutomationX/obj/*
+
+# ignore PowerShell Studio MetaData
+ServiceManagementAutomationX/ServiceManagementAutomationX.psproj
+ServiceManagementAutomationX/ServiceManagementAutomationX.psproj.bak
+ServiceManagementAutomationX/ServiceManagementAutomationX.psprojs
+ServiceManagementAutomationX/ServiceManagementAutomationX.psproj
+
+# ignore the TestResults
+TestResults/*
+
+# ignore the publishing Directory
+publish/*
