@@ -63,10 +63,20 @@
             $propertyList.Add([PSCustomObject]$newProp) | Out-Null
         }
         $newDefinition.properties = $propertyList.ToArray()
+        $associationsList = New-Object System.Collections.ArrayList
+        foreach ($relation in $entity.relation_descriptors) {
+            $newRelation = $relation | ConvertTo-PSFHashtable -Include name, domain, cardinality
+            $newRelation.locName = $translation.($relation.localized_label_key)
+            $newRelation.linkEntityName = $relation.second_endpoint_entity_name
+            $associationsList.Add([PSCustomObject]$newRelation) | Out-Null
+        }
+        $newDefinition.associations = $associationsList.ToArray()
     }
     Set-PSFConfig -FullName "$prefix.entityDefinition" -Value $parsedDefinitions -AllowDelete -Description "The parsed entity definitions"
     $teppEntryNames = @()
     $teppEntryProperties = @{}
+    $teppAssociations=@{}
+    $teppAssociationProperties=@{}
     foreach ($name in $parsedDefinitions.Keys) {
         $teppEntryNames += @{Text = $name; ToolTip = $parsedDefinitions.$name.locname }
         $teppEntryProperties.$name = @()
@@ -85,9 +95,24 @@
                 $teppEntryProperties."$name.$propName" = $subProperties
             }
         }
+        # Save the Associations
+        $teppAssociations.$name=@()
+        Write-PSFMessage "Suche Ass für $name"
+        foreach ($association in $parsedDefinitions.$name.associations) {
+            $teppAssociations.$name += @{Text = $association.name; ToolTip = $association.locName }
+            $assPropList = New-Object System.Collections.ArrayList
+            $linkEntityName = $association.linkEntityName
+            Write-PSFMessage -Level Host "`$parsedDefinitions.$linkEntityName.properties"
+            foreach ($subProperty in $parsedDefinitions.$linkEntityName.properties) {
+                $assPropList.Add(@{Text = "$($subProperty.name)"; ToolTip = $subProperty.locName })|Out-Null
+            }
+            $teppAssociationProperties."$name.$($association.name)" = $assPropList.ToArray()
+        }
     }
     Set-PSFConfig -FullName "$prefix.tepp.EntryNames" -Value $teppEntryNames -AllowDelete -Description "The suggestions for Entrynames"
     Set-PSFConfig -FullName "$prefix.tepp.EntryProperties" -Value $teppEntryProperties -AllowDelete -Description "The suggestions for Entry Property Names"
+    Set-PSFConfig -FullName "$prefix.tepp.EntityAssociations" -Value $teppAssociations -AllowDelete -Description "The suggestions for Entry Association Names"
+    Set-PSFConfig -FullName "$prefix.tepp.EntityAssociationProperties" -Value $teppAssociationProperties -AllowDelete -Description "The suggestions for Entry Association Property Names"
     if ($Persist) {
         Get-PSFConfig | Where-Object name -like "$prefix*" | Register-PSFConfig -Scope UserDefault
     }

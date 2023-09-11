@@ -5,14 +5,22 @@
         $Connection = (Get-SMAXLastConnection),
         [bool]$EnableException = $true,
         [bool]$EnablePaging = $true,
+        [parameter(mandatory = $false, ValueFromPipeline = $false, ParameterSetName = "byFilter")]
+        [parameter(mandatory = $true, ValueFromPipeline = $false, ParameterSetName = "byEntityId")]
         [PSFramework.TabExpansion.PsfArgumentCompleterAttribute("SMAX.EntityNames")]
         [string]$EntityName,
+        [parameter(mandatory = $false, ValueFromPipeline = $false, ParameterSetName = "byFilter")]
+        [parameter(mandatory = $true, ValueFromPipeline = $false, ParameterSetName = "byEntityId")]
         [PSFramework.TabExpansion.PsfArgumentCompleterAttribute("SMAX.EntityProperties")]
         [string[]]$Properties,
+        [parameter(mandatory = $false, ValueFromPipeline = $false, ParameterSetName = "byFilter")]
         [string]$Filter,
+        [parameter(mandatory = $true, ValueFromPipeline = $false, ParameterSetName = "byEntityId")]
+        [int]$Id,
+        [parameter(mandatory = $true, ValueFromPipeline = $false, ParameterSetName = "interactive")]
         [switch]$Interactive
     )
-    if ($Interactive) {
+    if ($PsCmdlet.ParameterSetName -eq 'interactive') {
         $chosenEntityName = (Get-PSFConfigValue -FullName "$($connection.psfConfPrefix).entityDefinition").values | Select-Object @{name = "Entity"; expression = { $_.Name } }, @{name = "Localized Name"; expression = { $_.LocName } }  | Out-GridView -OutputMode Single -Title "Choose entity" | Select-Object -ExpandProperty Entity
         if ($chosenEntityName) {
             $chosenAttributes = (Get-PSFConfigValue -FullName "$($connection.psfConfPrefix).entityDefinition").$chosenEntityName.properties | Select-Object @{name = "Property"; expression = { $_.Name } }, @{name = "Localized Name"; expression = { $_.LocName } }  | Out-GridView -OutputMode Multiple -Title "Choose Properties" | Select-Object -ExpandProperty Property
@@ -23,22 +31,29 @@
         [string]::IsNullOrEmpty()
         return
     }
+
     $apiCallParameter = @{
         EnableException        = $EnableException
         EnablePaging           = $EnablePaging
         Connection             = $Connection
         ConvertJsonAsHashtable = $false
-        LoggingAction          = "Add-SMAXAddress"
-        # LoggingActionValues = @($addressList.count, $explicitADOM)
+        LoggingAction          = "Get-SMAXEntity"
+        LoggingActionValues    = @($EntityName, $Properties,$Filter)
         method                 = "GET"
         Path                   = "/ems/$EntityName"
-        # Path            = "/ems/Incident?layout=Id,Status,OwnedByPerson,OwnedByPerson.Name,OwnedByPerson.Email"
         URLParameter           = @{
             layout = $Properties | Join-String -Separator ','
         }
     }
-    if (-not [string]::IsNullOrEmpty($Filter)) {
-        $apiCallParameter.URLParameter.filter = $Filter
+    switch ($PsCmdlet.ParameterSetName) {
+        'byEntityId'{
+            $apiCallParameter.Path = $apiCallParameter.Path+"/$Id"
+        }
+        default{
+            if (-not [string]::IsNullOrEmpty($Filter)) {
+                $apiCallParameter.URLParameter.filter = $Filter
+            }
+        }
     }
     Write-PSFMessage "`$apiCallParameter=$($apiCallParameter|ConvertTo-Json)"
     $result = Invoke-SMAXAPI @apiCallParameter | Where-Object { $_.properties}
