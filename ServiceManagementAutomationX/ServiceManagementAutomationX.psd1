@@ -44,6 +44,7 @@
 		'Get-SMAXCurrentUser'
 		'Get-SMAXEntityDescription'
 		'Get-SMAXEntityList'
+		'Get-SMAXEntity'
 		'Get-SMAXLastConnection'
 		'Get-SMAXRequest'
 		'Get-SMAXTranslation'

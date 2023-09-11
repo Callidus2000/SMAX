@@ -7,6 +7,7 @@
         [bool]$EnablePaging = $true,
         [PSFramework.TabExpansion.PsfArgumentCompleterAttribute("SMAX.EntityNames")]
         [string]$EntityName,
+        [PSFramework.TabExpansion.PsfArgumentCompleterAttribute("SMAX.EntityProperties")]
         [string[]]$Properties,
         [string]$Filter,
         [switch]$Interactive
@@ -41,6 +42,11 @@
     }
     Write-PSFMessage "`$apiCallParameter=$($apiCallParameter|ConvertTo-Json)"
     $result = Invoke-SMAXAPI @apiCallParameter
-    return $result
+    foreach ($item in $result) {
+        Add-Member -InputObject $item.properties -MemberType NoteProperty -Name related -Value $item.related_properties
+        $item.properties.PSObject.TypeNames.Insert(0, "SMAX.$($item.entity_type)")
+    }
+
+    return $result.properties
 
 }

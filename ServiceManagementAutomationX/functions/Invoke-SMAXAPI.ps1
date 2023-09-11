@@ -57,6 +57,9 @@
 
     .PARAMETER ConvertJsonAsHashtable
     If set the json result will be converted as a HashTable
+    .PARAMETER EnablePaging
+    Wenn die API mit Paging arbeitet, kann über diesn Parameter ein automatisches Handling aktivieren.
+    Dann werden alle Pages abgehandelt und nur die items zurückgeliefert.
 
     .PARAMETER EnableException
     If set to true, inner exceptions will be rethrown. Otherwise the an empty result will be returned.
@@ -81,6 +84,7 @@
         [parameter(mandatory = $true)]
         [Microsoft.Powershell.Commands.WebRequestMethod]$Method,
         [bool]$EnableException = $true,
+        [bool]$EnablePaging = $false,
         [string]$LoggingAction = "Invoke-SMAXAPI",
         [ValidateSet("Critical", "Important", "Output", "Host", "Significant", "VeryVerbose", "Verbose", "SomewhatVerbose", "System", "Debug", "InternalComment", "Warning")]
         [string]$LoggingLevel = (Get-PSFConfigValue -FullName "ServiceManagementAutomationX.Logging.Api" -Fallback "Verbose"),
@@ -96,11 +100,14 @@
         }
     }
     $apiCallParameter = $PSBoundParameters | ConvertTo-PSFHashtable -Exclude LoggingActionValues, RevisionNote, LoggingAction
+    if ($EnablePaging){
+        $apiCallParameter.PagingHandler='SMAX.PagingHandler'
+    }
     # return Invoke-ARAHRequest @requestParameter -PagingHandler 'Dracoon.PagingHandler'
 
 
     Invoke-PSFProtectedCommand -ActionString "APICall.$LoggingAction" -ActionStringValues (,$requestId+$LoggingActionValues) -ScriptBlock {
-        $result = Invoke-ARAHRequest @apiCallParameter -Verbose #-PagingHandler 'FM.PagingHandler'
+        $result = Invoke-ARAHRequest @apiCallParameter #-Verbose -PagingHandler 'SMAX.PagingHandler'
 
         # if ($null -eq $result) {
         #     Stop-PSFFunction -Message "No Result delivered" -EnableException $true

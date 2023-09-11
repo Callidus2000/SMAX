@@ -64,6 +64,19 @@
         $newDefinition.properties = $propertyList.ToArray()
     }
     Set-PSFConfig -FullName "$prefix.entityDefinition" -Value $parsedDefinitions -AllowDelete -Description "The parsed entity definitions"
+    $teppEntryNames = @()
+    $teppEntryProperties=@{}
+    foreach($name in $parsedDefinitions.Keys){
+        $teppEntryNames += @{Text = $name; ToolTip = $parsedDefinitions.$name.locname }
+        $teppEntryProperties.$name=@()
+        foreach ($property in $parsedDefinitions.$name.properties){
+            $propName = $property.name
+            $locName = $property.locname
+            $teppEntryProperties.$name+= @{Text = $propName; ToolTip = $locName }
+        }
+    }
+    Set-PSFConfig -FullName "$prefix.tepp.EntryNames" -Value $teppEntryNames -AllowDelete -Description "The suggestions for Entrynames"
+    Set-PSFConfig -FullName "$prefix.tepp.EntryProperties" -Value $teppEntryProperties -AllowDelete -Description "The suggestions for Entry Property Names"
     if($Persist){
         Get-PSFConfig |Where-Object name -like "$prefix*"|Register-PSFConfig -Scope UserDefault
     }
