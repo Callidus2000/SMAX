@@ -20,18 +20,18 @@
     $fullEntityDescription = $result.entity_descriptors | Where-Object domain -NotMatch 'sample'
     Set-PSFConfig -FullName "$prefix.fullEntityDescription" -Value $fullEntityDescription -AllowDelete -Description "The complete entity metadata for the given server and tennant."
     Set-PSFConfig -FullName "$prefix.possibleEntityNames" -Value $fullEntityDescription.Name -AllowDelete -Description "The complete list of entity names"
-    $translation=Get-SMAXTranslation -Connection $Connection
+    $translation = Get-SMAXTranslation -Connection $Connection
     Set-PSFConfig -FullName "$prefix.translation" -Value $translation -AllowDelete -Description "The translation dictionary"
-    $parsedDefinitions=@{}
-    foreach($entity in $fullEntityDescription){
-        $name=$entity.name
-        $newDefinition=@{}
+    $parsedDefinitions = @{}
+    foreach ($entity in $fullEntityDescription) {
+        $name = $entity.name
+        $newDefinition = @{}
         $parsedDefinitions.$name = $newDefinition
-        $newDefinition.name=$name
+        $newDefinition.name = $name
         $newDefinition.locName = $translation.($entity.localized_label_key)
         $propertyList = New-Object System.Collections.ArrayList
         foreach ($property in $entity.property_descriptors) {
-            $newProp = $property|ConvertTo-PSFHashtable -Include name,domain,required,readonly,logical_type
+            $newProp = $property | ConvertTo-PSFHashtable -Include name, domain, required, readonly, logical_type
             $newProp.locName = $translation.($property.localized_label_key)
             switch ($property.logical_type) {
                 'BOOLEAN' {}
@@ -47,8 +47,8 @@
                 'ENUM' {
                     $newProp.enumName = $property.enumeration_descriptor.name
                     $newProp.locEnumName = $translation.($property.enumeration_descriptor.localized_label_key)
-                    $possibleEnumValues=@{}
-                    foreach ($enum in $property.enumeration_descriptor.values){
+                    $possibleEnumValues = @{}
+                    foreach ($enum in $property.enumeration_descriptor.values) {
                         $possibleEnumValues."$($enum.name)" = $translation.($enum.localized_label_key)
                     }
                     $newProp.possibleValues = [PSCustomObject]$possibleEnumValues
@@ -57,27 +57,38 @@
                     $newProp.linkEntityName = $property.relation_descriptor.name
                     $newProp.locLinkEntityName = $translation.($property.relation_descriptor.localized_label_key)
                     $newProp.cardinality = $property.relation_descriptor.cardinality
+                    $newProp.remoteEntityName = $property.relation_descriptor.second_endpoint_entity_name
                 }
             }
-            $propertyList.Add([PSCustomObject]$newProp)|Out-Null
+            $propertyList.Add([PSCustomObject]$newProp) | Out-Null
         }
         $newDefinition.properties = $propertyList.ToArray()
     }
     Set-PSFConfig -FullName "$prefix.entityDefinition" -Value $parsedDefinitions -AllowDelete -Description "The parsed entity definitions"
     $teppEntryNames = @()
-    $teppEntryProperties=@{}
-    foreach($name in $parsedDefinitions.Keys){
+    $teppEntryProperties = @{}
+    foreach ($name in $parsedDefinitions.Keys) {
         $teppEntryNames += @{Text = $name; ToolTip = $parsedDefinitions.$name.locname }
-        $teppEntryProperties.$name=@()
-        foreach ($property in $parsedDefinitions.$name.properties){
+        $teppEntryProperties.$name = @()
+        foreach ($property in $parsedDefinitions.$name.properties) {
             $propName = $property.name
             $locName = $property.locname
-            $teppEntryProperties.$name+= @{Text = $propName; ToolTip = $locName }
+            $teppEntryProperties.$name += @{Text = $propName; ToolTip = $locName }
+            if ($property.logical_type -eq "ENTITY_LINK") {
+                $linkEntityName = $property.remoteEntityName
+                # Write-Host "Ergänze Props von $propName des Typs $linkEntityName"
+                $subProperties = @()
+                foreach ($subProperty in $parsedDefinitions.$linkEntityName.properties) {
+                    $subProperties += @{Text = "$($propName).$($subProperty.name)"; ToolTip = $subProperty.locName }
+                    # Write-PSFMessage "`$teppEntryProperties.`"$name.$propName`"+=$(@{Text = "$($propName).$($subProperty.name)"; ToolTip = $subProperty.locName }|ConvertTo-Json -Compress)"
+                }
+                $teppEntryProperties."$name.$propName" = $subProperties
+            }
         }
     }
     Set-PSFConfig -FullName "$prefix.tepp.EntryNames" -Value $teppEntryNames -AllowDelete -Description "The suggestions for Entrynames"
     Set-PSFConfig -FullName "$prefix.tepp.EntryProperties" -Value $teppEntryProperties -AllowDelete -Description "The suggestions for Entry Property Names"
-    if($Persist){
-        Get-PSFConfig |Where-Object name -like "$prefix*"|Register-PSFConfig -Scope UserDefault
+    if ($Persist) {
+        Get-PSFConfig | Where-Object name -like "$prefix*" | Register-PSFConfig -Scope UserDefault
     }
 }

@@ -6,12 +6,16 @@
 
         $definitions = Get-PSFConfigValue -FullName "$($connection.psfConfPrefix).tepp.EntryProperties"
         if(-not $definitions.containskey($entityName)){return}
-        # write-host $fakeBoundParameter.EntityName
+        Write-PSFMessage "$entityName>$wordToComplete"
+        if ($wordToComplete -match "([^.]+)\..*"){
+            $subPropName = $wordToComplete -replace "([^.]+)\..*",'$1'
+            if ($definitions.containskey("$entityName.$subPropName")){
+                # Write-PSFMessage "$entityName>>$subPropName"
+                # Write-PSFMessage "`$definitions.`"$entityName.$subPropName`""
+                return $definitions."$entityName.$subPropName" #.properties | Select-Object @{name = "Text"; expression = { $_.name } }, @{name = "ToolTip"; expression = { $_.locName}}
+            }
+        }
         return $definitions.$entityName #.properties | Select-Object @{name = "Text"; expression = { $_.name } }, @{name = "ToolTip"; expression = { $_.locName}}
-        # Write-PSFMessage -level host "Hubba"
-        # if ($Global:ENTITYDESCRIPTION) {
-        #     return $Global:ENTITYDESCRIPTION.name
-        # }
     }
     catch {
         return "Error"

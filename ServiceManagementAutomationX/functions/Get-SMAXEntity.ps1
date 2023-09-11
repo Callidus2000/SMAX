@@ -41,7 +41,7 @@
         $apiCallParameter.URLParameter.filter = $Filter
     }
     Write-PSFMessage "`$apiCallParameter=$($apiCallParameter|ConvertTo-Json)"
-    $result = Invoke-SMAXAPI @apiCallParameter
+    $result = Invoke-SMAXAPI @apiCallParameter | Where-Object { $_.properties}
     foreach ($item in $result) {
         Add-Member -InputObject $item.properties -MemberType NoteProperty -Name related -Value $item.related_properties
         $item.properties.PSObject.TypeNames.Insert(0, "SMAX.$($item.entity_type)")
