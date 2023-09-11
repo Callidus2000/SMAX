@@ -64,5 +64,7 @@
         $newDefinition.properties = $propertyList.ToArray()
     }
     Set-PSFConfig -FullName "$prefix.entityDefinition" -Value $parsedDefinitions -AllowDelete -Description "The parsed entity definitions"
-
+    if($Persist){
+        Get-PSFConfig |Where-Object name -like "$prefix*"|Register-PSFConfig -Scope UserDefault
+    }
 }
