@@ -5,8 +5,7 @@
         $InputObject,
         [string]$Prefix = $null,
        	[ValidateSet('HashTable', 'CustomObject')]
-        [string]
-        $ReturnMode = "CustomObject"
+        [string]$ReturnMode = "CustomObject"
     )
 
     begin {
