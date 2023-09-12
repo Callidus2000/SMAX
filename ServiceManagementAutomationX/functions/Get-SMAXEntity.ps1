@@ -17,20 +17,8 @@
         [string]$Filter,
         [parameter(mandatory = $true, ValueFromPipeline = $false, ParameterSetName = "byEntityId")]
         [int]$Id,
-        [parameter(mandatory = $true, ValueFromPipeline = $false, ParameterSetName = "interactive")]
-        [switch]$Interactive
+        [switch]$FlattenResult
     )
-    if ($PsCmdlet.ParameterSetName -eq 'interactive') {
-        $chosenEntityName = (Get-PSFConfigValue -FullName "$($connection.psfConfPrefix).entityDefinition").values | Select-Object @{name = "Entity"; expression = { $_.Name } }, @{name = "Localized Name"; expression = { $_.LocName } }  | Out-GridView -OutputMode Single -Title "Choose entity" | Select-Object -ExpandProperty Entity
-        if ($chosenEntityName) {
-            $chosenAttributes = (Get-PSFConfigValue -FullName "$($connection.psfConfPrefix).entityDefinition").$chosenEntityName.properties | Select-Object @{name = "Property"; expression = { $_.Name } }, @{name = "Localized Name"; expression = { $_.LocName } }  | Out-GridView -OutputMode Multiple -Title "Choose Properties" | Select-Object -ExpandProperty Property
-            if ($chosenAttributes) {
-                Write-PSFMessage -Level Host "Get-SMAXEntity -Connection `$Connection -EntityName $chosenEntityName -Properties $($chosenAttributes|add-string -Before "'" -Behind "'"|join-string -Separator ',')"
-            }
-        }
-        [string]::IsNullOrEmpty()
-        return
-    }
 
     $apiCallParameter = @{
         EnableException        = $EnableException
@@ -60,6 +48,9 @@
     foreach ($item in $result) {
         Add-Member -InputObject $item.properties -MemberType NoteProperty -Name related -Value $item.related_properties
         $item.properties.PSObject.TypeNames.Insert(0, "SMAX.$($item.entity_type)")
+    }
+    if($FlattenResult){
+        return $result.properties|ConvertTo-SMAXFlatObject
     }
 
     return $result.properties

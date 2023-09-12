@@ -93,13 +93,12 @@
 			Method      = "Post"
 			Body        = (@{login = $Credential.UserName ; password = $Credential.GetNetworkCredential().Password } | ConvertTo-Json)
 		}
-		Write-PSFMessage "`$restParam=$($restParam|ConvertTo-Json -Compress)"
+		# Write-PSFMessage "`$restParam=$($restParam|ConvertTo-Json -Compress)"
 		# $token = Invoke-RestMethod -Uri "$($connection.WebServiceRoot)/auth/authentication-endpoint/authenticate/token" -ContentType $ContentType -Method Post -Body $Body -SkipCertificateCheck
 		$token = Invoke-RestMethod @restParam
 
 		# Invoke-PSFProtectedCommand -ActionString "Connect-SMAX.Connecting" -ActionStringValues $Url -Target $Url -ScriptBlock {
 		# $result = Invoke-SMAXAPI @apiCallParameter -verbose
-		Write-Host "`$token=$token"
 		if ($null -eq $token) {
 			Stop-PSFFunction -Message "No API Results" -EnableException $EnableException -FunctionName $functionName
 		}

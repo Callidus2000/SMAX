@@ -4,7 +4,8 @@
         [parameter(Mandatory = $false)]
         $Connection = (Get-SMAXLastConnection),
         [bool]$EnableException = $true,
-        [switch]$Persist
+        [switch]$Persist,
+        [switch]$ExportDevJson
     )
 
     $prefix = $Connection.psfConfPrefix
@@ -102,7 +103,7 @@
             $teppAssociations.$name += @{Text = $association.name; ToolTip = $association.locName }
             $assPropList = New-Object System.Collections.ArrayList
             $linkEntityName = $association.linkEntityName
-            Write-PSFMessage -Level Host "`$parsedDefinitions.$linkEntityName.properties"
+            # Write-PSFMessage -Level Host "`$parsedDefinitions.$linkEntityName.properties"
             foreach ($subProperty in $parsedDefinitions.$linkEntityName.properties) {
                 $assPropList.Add(@{Text = "$($subProperty.name)"; ToolTip = $subProperty.locName })|Out-Null
             }
@@ -115,5 +116,13 @@
     Set-PSFConfig -FullName "$prefix.tepp.EntityAssociationProperties" -Value $teppAssociationProperties -AllowDelete -Description "The suggestions for Entry Association Property Names"
     if ($Persist) {
         Get-PSFConfig | Where-Object name -like "$prefix*" | Register-PSFConfig -Scope UserDefault
+    }
+    if ($ExportDevJson) {
+        $cfgFullNames=Get-PSFConfig | Where-Object fullname -like "$prefix*" | Select-Object -ExpandProperty FullName
+        foreach($cfgName in $cfgFullNames){
+            $filename = Join-Path $moduleRoot "en-us" (($cfgName -replace "ServiceManagementAutomationX.") + '.json')
+            Write-PSFMessage -Level Host "Exporting PSFConfig $cfgName to $filename"
+            Get-PSFConfigValue -FullName $cfgName|ConvertTo-Json -Depth 10 |Out-File -FilePath $filename -Force
+        }
     }
 }

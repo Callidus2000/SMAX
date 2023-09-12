@@ -41,6 +41,7 @@
 	# Functions to export from this module
 	FunctionsToExport = @(
 		'Connect-SMAX'
+		'ConvertTo-SMAXFlatObject'
 		'Get-SMAXCurrentUser'
 		'Get-SMAXEntityDescription'
 		'Get-SMAXEntityList'

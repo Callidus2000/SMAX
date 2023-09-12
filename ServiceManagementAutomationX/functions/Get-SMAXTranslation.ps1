@@ -23,10 +23,6 @@
         $Locale,
         [bool]$EnableException = $true
     )
-    if($Script:TRANSLATIONTABLE){
-        Write-PSFMessage "Returning existing table"
-        return $Script:TRANSLATIONTABLE
-    }
     if ([string]::IsNullOrEmpty($Locale)) {
         $currentUser = Get-SMAXCurrentUser -Connection $Connection
         $Locale = $currentUser.Locale
@@ -50,6 +46,5 @@
         }
     }
     Write-PSFMessage "Gathered $($dictionary.Keys.Count) translations"
-    $Script:TRANSLATIONTABLE=$dictionary
     return $dictionary
 }

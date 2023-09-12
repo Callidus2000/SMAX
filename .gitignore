@@ -20,3 +20,4 @@ TestResults/*
 
 # ignore the publishing Directory
 publish/*
+ServiceManagementAutomationX/en-us/*.json
