@@ -5,7 +5,7 @@
         $Connection = (Get-SMAXLastConnection),
         [bool]$EnableException = $true,
         [bool]$EnablePaging = $true,
-        [parameter(mandatory = $false, ValueFromPipeline = $false, ParameterSetName = "byFilter")]
+        [parameter(mandatory = $true, ValueFromPipeline = $false, ParameterSetName = "byFilter")]
         [parameter(mandatory = $true, ValueFromPipeline = $false, ParameterSetName = "byEntityId")]
         [PSFramework.TabExpansion.PsfArgumentCompleterAttribute("SMAX.EntityNames")]
         [string]$EntityName,

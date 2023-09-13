@@ -52,6 +52,8 @@
 		'Get-SMAXTranslation'
 		'Initialize-SMAXEntityModel'
 		'Invoke-SMAXAPI'
+		'New-SMAXEntity'
+		'Update-SMAXEntity'
 	)
 
 	# Cmdlets to export from this module

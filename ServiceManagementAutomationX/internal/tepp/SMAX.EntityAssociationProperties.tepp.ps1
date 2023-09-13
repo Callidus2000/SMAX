@@ -1,6 +1,10 @@
 ﻿Register-PSFTeppScriptblock -Name "SMAX.EntityAssociationProperties" -ScriptBlock {
     try {
-        $connection = Get-SMAXLastConnection
+        if ([string]::IsNullOrEmpty($fakeBoundParameter.Connection)){
+            $connection = Get-SMAXLastConnection
+        }else{
+            $connection = $fakeBoundParameter.Connection
+        }
         $entityName = $fakeBoundParameter.EntityName
         $associationName = $fakeBoundParameter.Association
         if ([string]::IsNullOrEmpty($entityName)) { return }
