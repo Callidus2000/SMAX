@@ -98,7 +98,7 @@
         }
         # Save the Associations
         $teppAssociations.$name=@()
-        Write-PSFMessage "Suche Ass für $name"
+        Write-PSFMessage "Query Association für $name"
         foreach ($association in $parsedDefinitions.$name.associations) {
             $teppAssociations.$name += @{Text = $association.name; ToolTip = $association.locName }
             $assPropList = New-Object System.Collections.ArrayList
@@ -115,7 +115,9 @@
     Set-PSFConfig -FullName "$prefix.tepp.EntityAssociations" -Value $teppAssociations -AllowDelete -Description "The suggestions for Entry Association Names"
     Set-PSFConfig -FullName "$prefix.tepp.EntityAssociationProperties" -Value $teppAssociationProperties -AllowDelete -Description "The suggestions for Entry Association Property Names"
     if ($Persist) {
-        Get-PSFConfig | Where-Object name -like "$prefix*" | Register-PSFConfig -Scope UserDefault
+        $configs=Get-PSFConfig | Where-Object fullname -like "$prefix*"
+        Write-PSFMessage "Register configs: $($configs.FullName -join ',')"
+        Register-PSFConfig -config $configs $_ -Scope UserDefault
     }
     if ($ExportDevJson) {
         $cfgFullNames=Get-PSFConfig | Where-Object fullname -like "$prefix*" | Select-Object -ExpandProperty FullName
