@@ -4,6 +4,6 @@
         [parameter(Mandatory = $false)]
     $Connection = (Get-SMAXLastConnection)
     )
-    $fullDescription = Get-SMAXEntityDescription -Connection $Connection -RawDescription
+    $fullDescription = Get-SMAXMetaEntityDescription -Connection $Connection -RawDescription
     return $fullDescription.name
 }

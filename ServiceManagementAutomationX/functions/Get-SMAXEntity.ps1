@@ -19,7 +19,13 @@
         [int]$Id,
         [switch]$FlattenResult
     )
-
+    if($Properties -contains '*'){
+        $definitions = Get-PSFConfigValue -FullName "$($connection.psfConfPrefix).entityDefinition"
+        $validProperties = $definitions.$EntityName.properties |  Select-Object -ExpandProperty name
+        $layout=$validProperties | Join-String -Separator ','
+    }else{
+        $layout = $Properties | Join-String -Separator ','
+    }
     $apiCallParameter = @{
         EnableException        = $EnableException
         EnablePaging           = $EnablePaging
@@ -30,7 +36,7 @@
         method                 = "GET"
         Path                   = "/ems/$EntityName"
         URLParameter           = @{
-            layout = $Properties | Join-String -Separator ','
+            layout = $layout
         }
     }
     switch ($PsCmdlet.ParameterSetName) {

@@ -27,7 +27,7 @@
         $apiCallParameter = @{
             EnableException     = $EnableException
             Connection          = $Connection
-            LoggingAction       = "Get-SMAXEntityDescription"
+            LoggingAction       = "Get-SMAXMetaEntityDescription"
             # LoggingActionValues = @($addressList.count, $explicitADOM)
             method              = "GET"
             Path            = "/personalization/person/me"

@@ -12,7 +12,7 @@
     $apiCallParameter = @{
         EnableException = $EnableException
         Connection      = $Connection
-        LoggingAction   = "Get-SMAXEntityDescription"
+        LoggingAction   = "Get-SMAXMetaEntityDescription"
         # LoggingActionValues = @($addressList.count, $explicitADOM)
         method          = "GET"
         Path            = "/metadata/ui/entity-descriptors"
@@ -21,7 +21,7 @@
     $fullEntityDescription = $result.entity_descriptors | Where-Object domain -NotMatch 'sample'
     Set-PSFConfig -FullName "$prefix.fullEntityDescription" -Value $fullEntityDescription -AllowDelete -Description "The complete entity metadata for the given server and tennant."
     Set-PSFConfig -FullName "$prefix.possibleEntityNames" -Value $fullEntityDescription.Name -AllowDelete -Description "The complete list of entity names"
-    $translation = Get-SMAXTranslation -Connection $Connection
+    $translation = Get-SMAXMetaTranslation -Connection $Connection
     Set-PSFConfig -FullName "$prefix.translation" -Value $translation -AllowDelete -Description "The translation dictionary"
     $parsedDefinitions = @{}
     foreach ($entity in $fullEntityDescription) {

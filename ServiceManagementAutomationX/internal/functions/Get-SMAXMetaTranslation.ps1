@@ -1,4 +1,4 @@
-﻿function Get-SMAXTranslation {
+﻿function Get-SMAXMetaTranslation {
     <#
     .SYNOPSIS
     Adds new addresses to the given ADOM.
@@ -30,7 +30,7 @@
     $apiCallParameter = @{
         EnableException        = $EnableException
         Connection             = $Connection
-        LoggingAction          = "Get-SMAXEntityDescription"
+        LoggingAction          = "Get-SMAXMetaEntityDescription"
         # LoggingActionValues = @($addressList.count, $explicitADOM)
         method                 = "GET"
         Path                   = "/l10n/bundles/saw/$Locale"

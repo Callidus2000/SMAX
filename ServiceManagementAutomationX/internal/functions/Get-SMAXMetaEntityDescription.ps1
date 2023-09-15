@@ -1,4 +1,4 @@
-﻿function Get-SMAXEntityDescription {
+﻿function Get-SMAXMetaEntityDescription {
     <#
     .SYNOPSIS
     Adds new addresses to the given ADOM.
@@ -31,7 +31,7 @@
         $apiCallParameter = @{
             EnableException = $EnableException
             Connection      = $Connection
-            LoggingAction   = "Get-SMAXEntityDescription"
+            LoggingAction   = "Get-SMAXMetaEntityDescription"
             # LoggingActionValues = @($addressList.count, $explicitADOM)
             method          = "GET"
             Path            = "/metadata/ui/entity-descriptors"
