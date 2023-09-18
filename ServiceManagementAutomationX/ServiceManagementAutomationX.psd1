@@ -40,10 +40,12 @@
 
 	# Functions to export from this module
 	FunctionsToExport = @(
+		'Add-SMAXAssociation'
 		'Add-SMAXEntity'
 		'Connect-SMAX'
 		'ConvertTo-SMAXFlatObject'
 		'Get-SMAXCurrentUser'
+		'Get-SMAXEntityDescription'
 		'Get-SMAXEntityList'
 		'Get-SMAXEntity'
 		'Get-SMAXEntityAssociation'
@@ -54,6 +56,7 @@
 		'Initialize-SMAXEntityModel'
 		'Invoke-SMAXAPI'
 		'New-SMAXEntity'
+		'Remove-SMAXAssociation'
 		'Update-SMAXEntity'
 	)
 
