@@ -41,6 +41,7 @@
 	# Functions to export from this module
 	FunctionsToExport = @(
 		'Add-SMAXAssociation'
+		'Add-SMAXComment'
 		'Add-SMAXEntity'
 		'Connect-SMAX'
 		'ConvertTo-SMAXFlatObject'
@@ -56,8 +57,10 @@
 		# 'Get-SMAXMetaTranslation'
 		'Initialize-SMAXEntityModel'
 		'Invoke-SMAXAPI'
+		'New-SMAXComment'
 		'New-SMAXEntity'
 		'Remove-SMAXAssociation'
+		'Update-SMAXComment'
 		'Update-SMAXEntity'
 	)
 

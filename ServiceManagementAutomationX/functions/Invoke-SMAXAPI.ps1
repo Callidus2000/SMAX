@@ -77,7 +77,7 @@
     param (
         $Connection = (Get-SMAXLastConnection),
         [string]$Path,
-        [Hashtable] $Body,
+        $Body,
         [Hashtable] $Header,
         [Alias("Query")]
         [Hashtable] $URLParameter,
@@ -105,6 +105,9 @@
     }
     # return Invoke-ARAHRequest @requestParameter -PagingHandler 'Dracoon.PagingHandler'
 
+    $connection.WebSession.Cookies = [System.Net.CookieContainer]::new()
+    $connection.WebSession.Cookies.Add($Connection.authCookie)
+
 
     Invoke-PSFProtectedCommand -ActionString "APICall.$LoggingAction" -ActionStringValues (,$requestId+$LoggingActionValues) -ScriptBlock {
         $result = Invoke-ARAHRequest @apiCallParameter #-Verbose -PagingHandler 'SMAX.PagingHandler'
@@ -123,7 +126,5 @@
     if ((Test-PSFFunctionInterrupt) -and $EnableException) {
         Throw "API-Error, statusCode: $statusCode, Message $($result.result.status.Message)" #-EnableException $true -StepsUpward 3 #-AlwaysWarning
     }
-    # Löschen der Security Cookies
-    $connection.websession.Cookies.GetAllCookies() | Where-Object name -eq  XSRF-TOKEN | ForEach-Object { $_.expired = $true }
     return $result
 }

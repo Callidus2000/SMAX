@@ -106,7 +106,9 @@
 		$Cookie.Name = "SMAX_AUTH_TOKEN" # Add the name of the cookie
 		$Cookie.Value = $token # Add the value of the cookie
 		$Cookie.Domain = ([System.Uri]$restParam.uri).DnsSafeHost
-		$connection.WebSession.Cookies.add($Cookie)
+		Add-Member -InputObject $connection -MemberType NoteProperty -Name "authCookie" -Value $Cookie
+		# $connection.WebSession.Cookies.add($Cookie)
+
 		# Add-Member -InputObject $connection -MemberType ScriptMethod -Name "Refresh" -Value {
 		# 	$functionName = "Connect-SMAX>Refresh"
 		# 	Write-PSFMessage "Stelle Verbindung her zu $($this.ServerRoot)" -Target $this.ServerRoot -FunctionName $functionName
