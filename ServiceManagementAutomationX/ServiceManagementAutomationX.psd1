@@ -60,6 +60,7 @@
 		'New-SMAXComment'
 		'New-SMAXEntity'
 		'Remove-SMAXAssociation'
+		'Remove-SMAXComment'
 		'Update-SMAXComment'
 		'Update-SMAXEntity'
 	)
