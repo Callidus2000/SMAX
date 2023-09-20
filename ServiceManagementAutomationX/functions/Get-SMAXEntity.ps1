@@ -15,14 +15,17 @@
         [string[]]$Properties,
         [parameter(mandatory = $false, ValueFromPipeline = $false, ParameterSetName = "byFilter")]
         [string]$Filter,
+        [parameter(mandatory = $false, ValueFromPipeline = $false, ParameterSetName = "byFilter")]
+        [string]$Order,
         [parameter(mandatory = $true, ValueFromPipeline = $false, ParameterSetName = "byEntityId")]
         [int]$Id,
         [switch]$FlattenResult
     )
     if($Properties -contains '*'){
-        $definitions = Get-PSFConfigValue -FullName "$(Get-SMAXConfPrefix -Connection $Connection).entityDefinition"
-        $validProperties = $definitions.$EntityName.properties |  Select-Object -ExpandProperty name
-        $layout=$validProperties | Join-String -Separator ','
+        # $definitions = Get-PSFConfigValue -FullName "$(Get-SMAXConfPrefix -Connection $Connection).entityDefinition"
+        # $validProperties = $definitions.$EntityName.properties |  Select-Object -ExpandProperty name
+        # $layout=$validProperties | Join-String -Separator ','
+        $layout="FULL_LAYOUT"
     }else{
         $layout = $Properties | Join-String -Separator ','
     }
@@ -46,6 +49,9 @@
         default{
             if (-not [string]::IsNullOrEmpty($Filter)) {
                 $apiCallParameter.URLParameter.filter = $Filter
+            }
+            if (-not [string]::IsNullOrEmpty($Order)) {
+                $apiCallParameter.URLParameter.order = $Order
             }
         }
     }
