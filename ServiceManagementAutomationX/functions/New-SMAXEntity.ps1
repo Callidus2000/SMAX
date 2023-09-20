@@ -11,7 +11,7 @@
         [string]$ReturnMode = "HashTable"
     )
     Write-PSFMessage "Creating empty entity of type $EntityName with all required properties"
-    $definitions = Get-PSFConfigValue -FullName "$($connection.psfConfPrefix).entityDefinition"
+    $definitions = Get-PSFConfigValue -FullName "$(Get-SMAXConfPrefix -Connection $Connection).entityDefinition"
     if (-not $definitions.containskey($entityName)) {
         Write-PSFMessage -Level Critical "Entitytype $EntityName not defined"
         return

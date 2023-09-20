@@ -1,7 +1,7 @@
 ﻿Register-PSFTeppScriptblock -Name "SMAX.EntityProperties" -ScriptBlock {
     try {
         if ([string]::IsNullOrEmpty($fakeBoundParameter.Connection)) {
-            $connection = Get-SMAXLastConnection
+            $connection = Get-SMAXLastConnection -EnableException $false
         }
         else {
             $connection = $fakeBoundParameter.Connection
@@ -10,11 +10,11 @@
         if ([string]::IsNullOrEmpty($entityName)){return}
         switch ($commandName){
             'New-SMAXEntity' {
-                $definitions = Get-PSFConfigValue -FullName "$($connection.psfConfPrefix).entityDefinition"
+                $definitions = Get-PSFConfigValue -FullName "$(Get-SMAXConfPrefix -Connection $Connection).entityDefinition"
                 return $definitions.$entityName.properties | where-object required -eq $false | Select-Object @{name = "Text"; expression = { $_.name } }, @{name = "ToolTip"; expression = { $_.locName}}
             }
             default{
-                $definitions = Get-PSFConfigValue -FullName "$($connection.psfConfPrefix).tepp.EntryProperties"
+                $definitions = Get-PSFConfigValue -FullName "$(Get-SMAXConfPrefix -Connection $Connection).tepp.EntryProperties"
                 if(-not $definitions.containskey($entityName)){return}
                 # Write-PSFMessage "$entityName>$wordToComplete"
                 if ($wordToComplete -match "([^.]+)\..*"){

@@ -83,7 +83,10 @@
 		$connection = Get-ARAHConnection -Url $Url -APISubPath "/rest/$Tenant"
 		if ($SkipCheck) { $connection.SkipCheck = $SkipCheck }
 		Add-Member -InputObject $connection -MemberType NoteProperty -Name "tenantId" -Value $Tenant
-		Add-Member -InputObject $connection -MemberType NoteProperty -Name "psfConfPrefix" -Value ("ServiceManagementAutomationX."+(([System.Uri]$connection.WebServiceRoot).DnsSafeHost -replace '\.', '_')+".$Tenant")
+		$psfConfPrefix = ("ServiceManagementAutomationX." + (([System.Uri]$connection.WebServiceRoot).DnsSafeHost -replace '\.', '_') + ".$Tenant")
+		Add-Member -InputObject $connection -MemberType NoteProperty -Name "psfConfPrefix" -Value $psfConfPrefix
+		Set-PSFConfig -Module 'ServiceManagementAutomationX' -Name 'lastConfPrefix' -Value $psfConfPrefix -AllowDelete -Validation string -Description "The last connection prefix; needed for TEPP if no connection available" -PassThru|Register-PSFConfig -Scope UserDefault
+
 		# $connection.credential = $Credential
 		$connection.ContentType = "application/json;charset=UTF-8"
 		$connection.authenticatedUser = $Credential.UserName

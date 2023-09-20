@@ -1,7 +1,7 @@
 ﻿Register-PSFTeppScriptblock -Name "SMAX.EntityAssociationProperties" -ScriptBlock {
     try {
         if ([string]::IsNullOrEmpty($fakeBoundParameter.Connection)){
-            $connection = Get-SMAXLastConnection
+            $connection = Get-SMAXLastConnection -EnableException $false
         }else{
             $connection = $fakeBoundParameter.Connection
         }
@@ -10,7 +10,7 @@
         if ([string]::IsNullOrEmpty($entityName)) { return }
         if ([string]::IsNullOrEmpty($associationName)) { return }
 
-        $definitions = Get-PSFConfigValue -FullName "$($connection.psfConfPrefix).tepp.EntityAssociationProperties"
+        $definitions = Get-PSFConfigValue -FullName "$(Get-SMAXConfPrefix -Connection $Connection).tepp.EntityAssociationProperties"
         if (-not $definitions.containskey("$entityName.$associationName")) { return }
         return $definitions."$entityName.$associationName"
     }

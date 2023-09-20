@@ -14,11 +14,11 @@
     )
     begin {
         $entityList = new System.Collections.ArrayList
-        $definitions = Get-PSFConfigValue -FullName "$($connection.psfConfPrefix).entityDefinition"
+        $definitions = Get-PSFConfigValue -FullName "$(Get-SMAXConfPrefix -Connection $Connection).entityDefinition"
         if([string]::IsNullOrEmpty($definitions)){
             Stop-PSFFunction -EnableException $EnableException -Message "SMAX Entitymodel not initialized, please run Initialize-SMAXEntityModel"
         }
-        Write-PSFMessage "Load Definition $($connection.psfConfPrefix).entityDefinition"
+        Write-PSFMessage "Load Definition $(Get-SMAXConfPrefix -Connection $Connection).entityDefinition"
         # $definitions|json|Set-Clipboard
         # Write-PSFMessage "BeginBulk `$InputObject.Gettype(): $($InputObject.GetType())"
         # Write-PSFMessage "BeginBulk `$InputObject: $($InputObject|ConvertTo-Json -Compress -Depth 4)"

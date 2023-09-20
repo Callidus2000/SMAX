@@ -8,7 +8,7 @@
         [switch]$ExportDevJson
     )
 
-    $prefix = $Connection.psfConfPrefix
+    $prefix = Get-SMAXConfPrefix -Connection $Connection
     $apiCallParameter = @{
         EnableException = $EnableException
         Connection      = $Connection

@@ -20,7 +20,7 @@
         [switch]$FlattenResult
     )
     if($Properties -contains '*'){
-        $definitions = Get-PSFConfigValue -FullName "$($connection.psfConfPrefix).entityDefinition"
+        $definitions = Get-PSFConfigValue -FullName "$(Get-SMAXConfPrefix -Connection $Connection).entityDefinition"
         $validProperties = $definitions.$EntityName.properties |  Select-Object -ExpandProperty name
         $layout=$validProperties | Join-String -Separator ','
     }else{

@@ -13,7 +13,7 @@
         # [string[]]$Properties
     )
     $sb=new System.Text.StringBuilder
-    $definitions = Get-PSFConfigValue -FullName "$($connection.psfConfPrefix).entityDefinition"
+    $definitions = Get-PSFConfigValue -FullName "$(Get-SMAXConfPrefix -Connection $Connection).entityDefinition"
 
     $detailsScript = {
         $property=$_

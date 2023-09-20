@@ -46,6 +46,7 @@
 		'Connect-SMAX'
 		'ConvertTo-SMAXFlatObject'
 		'Get-SMAXComment'
+		'Get-SMAXConfPrefix'
 		'Get-SMAXCurrentUser'
 		'Get-SMAXEntityDescription'
 		'Get-SMAXEntityList'
