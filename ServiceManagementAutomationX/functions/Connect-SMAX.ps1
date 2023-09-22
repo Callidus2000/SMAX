@@ -57,105 +57,102 @@
 		[String[]]$SkipCheck,
 		[bool]$EnableException = $true
 	)
-	begin {
-		if ($OldConnection) {
-			Write-PSFMessage "Getting parameters from existing (mistyped) Connection object"
-			throw "ToBeImplemented"
-			# $Url=$OldConnection.ServerRoot
-			# $Credential = $OldConnection.credential
-			# if ($OldConnection.SkipCheck){
-			# 	$connection.SkipCheck
-			# }
-			# $additionalParams = $OldConnection.forti
-			# if ($OldConnection.forti.defaultADOM) {
-			# 	$ADOM = $OldConnection.forti.defaultADOM
-			# }
-		}
-		# else{
-		# 	$additionalParams = @{
-		# 		requestId       = 1
-		# 		session         = $null
-		# 		EnableException = $EnableException
-		# 	}
-		# }
-	}
-	end {
-		$connection = Get-ARAHConnection -Url $Url -APISubPath "/rest/$Tenant"
+	if ($OldConnection) {
+		Write-PSFMessage "Getting parameters from existing (mistyped) Connection object"
+		# throw "ToBeImplemented"
+		$connection = Get-ARAHConnection -Url $OldConnection.ServerRoot -APISubPath "/rest/$($OldConnection.tenantId)"
 		if ($SkipCheck) { $connection.SkipCheck = $SkipCheck }
-		Add-Member -InputObject $connection -MemberType NoteProperty -Name "tenantId" -Value $Tenant
-		$psfConfPrefix = ("ServiceManagementAutomationX." + (([System.Uri]$connection.WebServiceRoot).DnsSafeHost -replace '\.', '_') + ".$Tenant")
-		Add-Member -InputObject $connection -MemberType NoteProperty -Name "psfConfPrefix" -Value $psfConfPrefix
-		Set-PSFConfig -Module 'ServiceManagementAutomationX' -Name 'lastConfPrefix' -Value $psfConfPrefix -AllowDelete -Validation string -Description "The last connection prefix; needed for TEPP if no connection available" -PassThru|Register-PSFConfig -Scope UserDefault
+		Add-Member -InputObject $connection -MemberType NoteProperty -Name "tenantId" -Value $OldConnection.tenantId
+		Add-Member -InputObject $connection -MemberType NoteProperty -Name "psfConfPrefix" -Value $OldConnection.psfConfPrefix
+		Set-PSFConfig -Module 'ServiceManagementAutomationX' -Name 'lastConfPrefix' -Value $OldConnection.psfConfPrefix -AllowDelete -Validation string -Description "The last connection prefix; needed for TEPP if no connection available" -PassThru | Register-PSFConfig -Scope UserDefault
 
 		# $connection.credential = $Credential
+		$token = $OldConnection.authCookie.Value
 		$connection.ContentType = "application/json;charset=UTF-8"
-		$connection.authenticatedUser = $Credential.UserName
-		$restParam = @{
-			Uri         = "$($connection.ServerRoot)/auth/authentication-endpoint/authenticate/token"
-			ContentType = $connection.ContentType
-			Method      = "Post"
-			Body        = (@{login = $Credential.UserName ; password = $Credential.GetNetworkCredential().Password } | ConvertTo-Json)
-		}
-		# Write-PSFMessage "`$restParam=$($restParam|ConvertTo-Json -Compress)"
-		# $token = Invoke-RestMethod -Uri "$($connection.WebServiceRoot)/auth/authentication-endpoint/authenticate/token" -ContentType $ContentType -Method Post -Body $Body -SkipCertificateCheck
-		$token = Invoke-RestMethod @restParam
-
-		# Invoke-PSFProtectedCommand -ActionString "Connect-SMAX.Connecting" -ActionStringValues $Url -Target $Url -ScriptBlock {
-		# $result = Invoke-SMAXAPI @apiCallParameter -verbose
-		if ($null -eq $token) {
-			Stop-PSFFunction -Message "No API Results" -EnableException $EnableException -FunctionName $functionName
-		}
+		$connection.authenticatedUser = $OldConnection.authenticatedUser
 		$Cookie = New-Object System.Net.Cookie
 		$Cookie.Name = "SMAX_AUTH_TOKEN" # Add the name of the cookie
 		$Cookie.Value = $token # Add the value of the cookie
-		$Cookie.Domain = ([System.Uri]$restParam.uri).DnsSafeHost
+		$Cookie.Domain = ([System.Uri]$OldConnection.ServerRoot).DnsSafeHost
 		Add-Member -InputObject $connection -MemberType NoteProperty -Name "authCookie" -Value $Cookie
-		# $connection.WebSession.Cookies.add($Cookie)
-
-		# Add-Member -InputObject $connection -MemberType ScriptMethod -Name "Refresh" -Value {
-		# 	$functionName = "Connect-SMAX>Refresh"
-		# 	Write-PSFMessage "Stelle Verbindung her zu $($this.ServerRoot)" -Target $this.ServerRoot -FunctionName $functionName
-
-		# 	$apiCallParameter = @{
-		# 		Connection          = $this
-		# 		EnableException     = $this.forti.EnableException
-		# 		method              = "exec"
-		# 		Path                = "sys/login/user"
-		# 		LoggingAction       = "Connect-SMAX"
-		# 		LoggingActionValues = @($this.ServerRoot, $this.Credential.UserName)
-		# 		Parameter           = @{
-		# 			"data" = @{
-		# 				"passwd" = $this.Credential.GetNetworkCredential().Password
-		# 				"user"   = $this.Credential.UserName
-		# 			}
-		# 		}
-		# 	}
-
-		# 	# Invoke-PSFProtectedCommand -ActionString "Connect-SMAX.Connecting" -ActionStringValues $Url -Target $Url -ScriptBlock {
-		# 	$result = Invoke-SMAXAPI @apiCallParameter
-		# 	if ($null -eq $result) {
-		# 		Stop-PSFFunction -Message "No API Results" -EnableException $EnableException -FunctionName $functionName
-		# 	}
-		# 	# } -PSCmdlet $PSCmdlet  -EnableException $EnableException
-		# 	if (Test-PSFFunctionInterrupt) {
-		# 		Write-PSFMessage "Test-PSFFunctionInterrupt" -FunctionName $functionName
-		# 		return
-		# 	}
-		# 	if ($result.session) {
-		# 		$this.forti.session = $result.session
-		# 	}
-		# }
-		# switch ($PsCmdlet.ParameterSetName) {
-		# 	'credential' {
-		# 		$connection.Refresh()
-		# 	}
-		# 	'oldConnection' {}
-		# }
-		# if ($connection.forti.session) {
-		# 	Write-PSFMessage -string "Connect-SMAX.Connected"
-			Set-PSFConfig -Module 'ServiceManagementAutomationX' -Name 'LastConnection' -Value $connection -Description "Last known Connection" -AllowDelete
-			return $connection
-		# }
-		# Write-PSFMessage -string "Connect-SMAX.NotConnected" -Level Warning
+		Set-PSFConfig -Module 'ServiceManagementAutomationX' -Name 'LastConnection' -Value $connection -Description "Last known Connection" -AllowDelete
+		return $connection
 	}
+	$connection = Get-ARAHConnection -Url $Url -APISubPath "/rest/$Tenant"
+	if ($SkipCheck) { $connection.SkipCheck = $SkipCheck }
+	Add-Member -InputObject $connection -MemberType NoteProperty -Name "tenantId" -Value $Tenant
+	$psfConfPrefix = ("ServiceManagementAutomationX." + (([System.Uri]$connection.WebServiceRoot).DnsSafeHost -replace '\.', '_') + ".$Tenant")
+	Add-Member -InputObject $connection -MemberType NoteProperty -Name "psfConfPrefix" -Value $psfConfPrefix
+	Set-PSFConfig -Module 'ServiceManagementAutomationX' -Name 'lastConfPrefix' -Value $psfConfPrefix -AllowDelete -Validation string -Description "The last connection prefix; needed for TEPP if no connection available" -PassThru | Register-PSFConfig -Scope UserDefault
+
+	# $connection.credential = $Credential
+	$connection.ContentType = "application/json;charset=UTF-8"
+	$connection.authenticatedUser = $Credential.UserName
+	$restParam = @{
+		Uri         = "$($connection.ServerRoot)/auth/authentication-endpoint/authenticate/token"
+		ContentType = $connection.ContentType
+		Method      = "Post"
+		Body        = (@{login = $Credential.UserName ; password = $Credential.GetNetworkCredential().Password } | ConvertTo-Json)
+	}
+	# Write-PSFMessage "`$restParam=$($restParam|ConvertTo-Json -Compress)"
+	# $token = Invoke-RestMethod -Uri "$($connection.WebServiceRoot)/auth/authentication-endpoint/authenticate/token" -ContentType $ContentType -Method Post -Body $Body -SkipCertificateCheck
+	$token = Invoke-RestMethod @restParam
+
+	# Invoke-PSFProtectedCommand -ActionString "Connect-SMAX.Connecting" -ActionStringValues $Url -Target $Url -ScriptBlock {
+	# $result = Invoke-SMAXAPI @apiCallParameter -verbose
+	if ($null -eq $token) {
+		Stop-PSFFunction -Message "No API Results" -EnableException $EnableException -FunctionName $functionName
+	}
+	$Cookie = New-Object System.Net.Cookie
+	$Cookie.Name = "SMAX_AUTH_TOKEN" # Add the name of the cookie
+	$Cookie.Value = $token # Add the value of the cookie
+	$Cookie.Domain = ([System.Uri]$restParam.uri).DnsSafeHost
+	Add-Member -InputObject $connection -MemberType NoteProperty -Name "authCookie" -Value $Cookie
+	# $connection.WebSession.Cookies.add($Cookie)
+
+	# Add-Member -InputObject $connection -MemberType ScriptMethod -Name "Refresh" -Value {
+	# 	$functionName = "Connect-SMAX>Refresh"
+	# 	Write-PSFMessage "Stelle Verbindung her zu $($this.ServerRoot)" -Target $this.ServerRoot -FunctionName $functionName
+
+	# 	$apiCallParameter = @{
+	# 		Connection          = $this
+	# 		EnableException     = $this.forti.EnableException
+	# 		method              = "exec"
+	# 		Path                = "sys/login/user"
+	# 		LoggingAction       = "Connect-SMAX"
+	# 		LoggingActionValues = @($this.ServerRoot, $this.Credential.UserName)
+	# 		Parameter           = @{
+	# 			"data" = @{
+	# 				"passwd" = $this.Credential.GetNetworkCredential().Password
+	# 				"user"   = $this.Credential.UserName
+	# 			}
+	# 		}
+	# 	}
+
+	# 	# Invoke-PSFProtectedCommand -ActionString "Connect-SMAX.Connecting" -ActionStringValues $Url -Target $Url -ScriptBlock {
+	# 	$result = Invoke-SMAXAPI @apiCallParameter
+	# 	if ($null -eq $result) {
+	# 		Stop-PSFFunction -Message "No API Results" -EnableException $EnableException -FunctionName $functionName
+	# 	}
+	# 	# } -PSCmdlet $PSCmdlet  -EnableException $EnableException
+	# 	if (Test-PSFFunctionInterrupt) {
+	# 		Write-PSFMessage "Test-PSFFunctionInterrupt" -FunctionName $functionName
+	# 		return
+	# 	}
+	# 	if ($result.session) {
+	# 		$this.forti.session = $result.session
+	# 	}
+	# }
+	# switch ($PsCmdlet.ParameterSetName) {
+	# 	'credential' {
+	# 		$connection.Refresh()
+	# 	}
+	# 	'oldConnection' {}
+	# }
+	# if ($connection.forti.session) {
+	# 	Write-PSFMessage -string "Connect-SMAX.Connected"
+	Set-PSFConfig -Module 'ServiceManagementAutomationX' -Name 'LastConnection' -Value $connection -Description "Last known Connection" -AllowDelete
+	return $connection
+	# }
+	# Write-PSFMessage -string "Connect-SMAX.NotConnected" -Level Warning
 }

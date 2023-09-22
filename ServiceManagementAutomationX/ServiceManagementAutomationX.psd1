@@ -26,7 +26,8 @@
 	# Modules that must be imported into the global environment prior to importing
 	# this module
 	RequiredModules = @(
-		@{ ModuleName='PSFramework'; ModuleVersion='1.7.249' }
+		@{ ModuleName='PSFramework'; ModuleVersion='1.9.310' }
+		@{ ModuleName='ARAH'; ModuleVersion='1.3.8' }
 	)
 
 	# Assemblies that must be loaded prior to importing this module
@@ -44,19 +45,19 @@
 		'Add-SMAXComment'
 		'Add-SMAXEntity'
 		'Connect-SMAX'
+		'Convert-SMAXTimeStamp'
 		'ConvertTo-SMAXFlatObject'
+		'Get-SMAXAttachement'
 		'Get-SMAXComment'
 		'Get-SMAXConfPrefix'
 		'Get-SMAXCurrentUser'
-		'Get-SMAXEntityDescription'
-		'Get-SMAXEntityList'
 		'Get-SMAXEntity'
 		'Get-SMAXEntityAssociation'
+		'Get-SMAXEntityDescription'
+		'Get-SMAXEntityList'
 		'Get-SMAXLastConnection'
 		'Get-SMAXRequest'
 		'Get-SMAXUserOption'
-		# 'Get-SMAXMetaEntityDescription'
-		# 'Get-SMAXMetaTranslation'
 		'Initialize-SMAXEntityModel'
 		'Invoke-SMAXAPI'
 		'New-SMAXComment'
@@ -66,6 +67,8 @@
 		'Remove-SMAXComment'
 		'Update-SMAXComment'
 		'Update-SMAXEntity'
+		# 'Get-SMAXMetaEntityDescription'
+		# 'Get-SMAXMetaTranslation'
 	)
 
 	# Cmdlets to export from this module

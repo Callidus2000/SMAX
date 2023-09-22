@@ -89,6 +89,7 @@
         [ValidateSet("Critical", "Important", "Output", "Host", "Significant", "VeryVerbose", "Verbose", "SomewhatVerbose", "System", "Debug", "InternalComment", "Warning")]
         [string]$LoggingLevel = (Get-PSFConfigValue -FullName "ServiceManagementAutomationX.Logging.Api" -Fallback "Verbose"),
         [switch]$ConvertJsonAsHashtable,
+        [string]$OutFile,
         [string[]]$LoggingActionValues = ""
     )
     if (-not $Connection) {
