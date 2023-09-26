@@ -63,7 +63,7 @@
     }
     end {
         Write-PSFMessage "Count of entities: $($entityList.count)"
-        Write-PSFMessage "$($entityList|json)"
+        Write-PSFMessage "$($entityList|ConvertTo-Json)"
         $apiCallParameter = @{
             EnableException        = $EnableException
             # EnablePaging           = $EnablePaging
