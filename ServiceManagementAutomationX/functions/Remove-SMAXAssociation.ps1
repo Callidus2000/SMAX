@@ -64,10 +64,6 @@
         [parameter(mandatory = $true, ValueFromPipeline = $false, ParameterSetName = "BuildBulk")]
         [PSFramework.TabExpansion.PsfArgumentCompleterAttribute("SMAX.EntityAssociations")]
         [string]$Association,
-        [parameter(mandatory = $true, ValueFromPipeline = $false, ParameterSetName = "singleAssociation")]
-        [parameter(mandatory = $true, ValueFromPipeline = $false, ParameterSetName = "executeBulk")]
-        [ValidateSet('Create', 'Delete')]
-        [string]$Operation,
         [parameter(mandatory = $true, ValueFromPipeline = $false, ParameterSetName = "executeBulk")]
         [parameter(mandatory = $true, ValueFromPipeline = $false, ParameterSetName = "BuildBulk")]
         [string]$BulkID,
