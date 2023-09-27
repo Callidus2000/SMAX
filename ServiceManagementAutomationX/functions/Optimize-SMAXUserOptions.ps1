@@ -9,8 +9,8 @@
     $optionsTable = ($UserOptions | ConvertFrom-Json -AsHashtable).complexTypeProperties.properties
     $UserOptionsType = $optionsTable.DynamicComplexTypeRefName_c
     $uoDef=Get-SMAXUserOption -Connection $Connection -Id $UserOptionsType
-    $results=@{}
-    foreach($key in $optionsTable.Keys){
+    $results=[ordered]@{}
+    foreach ($key in $uoDef.userOptionsDescriptor.userOptionsPropertyDescriptors.name) {
         if ($optionsTable.$key -eq $UserOptionsType){
             Continue
         }
