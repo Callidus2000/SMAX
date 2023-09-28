@@ -1,22 +1,36 @@
 ﻿function Get-SMAXMetaTranslation {
     <#
-    .SYNOPSIS
-    Adds new addresses to the given ADOM.
+.SYNOPSIS
+Retrieves translations for a specific locale in the Service Management Automation X (SMAX) platform.
 
-    .DESCRIPTION
-    Adds new addresses to the given ADOM.
+.DESCRIPTION
+The Get-SMAXMetaTranslation function allows you to retrieve translations for a specified locale
+in the SMAX platform. You can provide a connection and specify the desired locale.
 
-    .PARAMETER Connection
-    The API connection object.
+.PARAMETER Connection
+Specifies the SMAX connection to use. If not provided, it uses the last established connection.
 
-    .PARAMETER EnableException
-	Should Exceptions been thrown?
+.PARAMETER Locale
+Specifies the locale for which translations are retrieved. If not provided, it uses the locale
+associated with the current user obtained from the connection.
 
-    .EXAMPLE
+.PARAMETER EnableException
+Indicates whether exceptions should be enabled. By default, exceptions are enabled.
 
-    .NOTES
-    General notes
-    #>
+.EXAMPLE
+PS C:\> Get-SMAXMetaTranslation -Connection $conn -Locale "fr-FR"
+
+This example retrieves translations for the French (France) locale in the SMAX platform.
+
+.EXAMPLE
+PS C:\> Get-SMAXMetaTranslation -Connection $conn
+
+This example retrieves translations for the locale associated with the current user in the SMAX platform.
+
+.NOTES
+File Name      : Get-SMAXMetaTranslation.ps1
+
+#>
     param (
         [parameter(Mandatory = $false)]
         $Connection = (Get-SMAXLastConnection),
@@ -31,13 +45,11 @@
         EnableException        = $EnableException
         Connection             = $Connection
         LoggingAction          = "Get-SMAXMetaEntityDescription"
-        # LoggingActionValues = @($addressList.count, $explicitADOM)
         method                 = "GET"
         Path                   = "/l10n/bundles/saw/$Locale"
         ConvertJsonAsHashtable = $true
     }
     $result = Invoke-SMAXAPI @apiCallParameter
-    # write-host "`$result=$result"
     $dictionary=@{}
     foreach ($resourceTable in $result.Bundles.Resources) {
         $resourceTable.GetEnumerator() | Where-Object { $_.value } | ForEach-Object {

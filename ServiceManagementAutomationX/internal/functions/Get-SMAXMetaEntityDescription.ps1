@@ -1,45 +1,44 @@
 ﻿function Get-SMAXMetaEntityDescription {
     <#
     .SYNOPSIS
-    Adds new addresses to the given ADOM.
+    Retrieves metadata descriptions for entities in the Service Management Automation X (SMAX) platform.
 
     .DESCRIPTION
-    Adds new addresses to the given ADOM.
+    The Get-SMAXMetaEntityDescription function allows you to retrieve metadata descriptions for SMAX entities.
+    You can specify the entity name and provide a connection.
 
     .PARAMETER Connection
-    The API connection object.
+    Specifies the SMAX connection to use. If not provided, it uses the last established connection.
 
+    .PARAMETER EntityName
+    Specifies the name of the entity for which metadata descriptions are retrieved.
 
     .PARAMETER EnableException
-	Should Exceptions been thrown?
+    Indicates whether exceptions should be enabled. By default, exceptions are enabled.
 
     .EXAMPLE
+    PS C:\> Get-SMAXMetaEntityDescription -Connection $conn -EntityName "Incident"
+
+    This example retrieves metadata descriptions for the "Incident" entity in the SMAX platform.
 
     .NOTES
-    General notes
+    File Name      : Get-SMAXMetaEntityDescription.ps1
+
     #>
     param (
         [parameter(Mandatory = $false)]
         $Connection = (Get-SMAXLastConnection),
         [PSFramework.TabExpansion.PsfArgumentCompleterAttribute("SMAX.EntityNames")]
         [string]$EntityName,
-        [switch]$RawDescription,
         [bool]$EnableException = $true
     )
-    if (-not $Global:ENTITYDESCRIPTION) {
-
         $apiCallParameter = @{
             EnableException = $EnableException
             Connection      = $Connection
             LoggingAction   = "Get-SMAXMetaEntityDescription"
-            # LoggingActionValues = @($addressList.count, $explicitADOM)
             method          = "GET"
             Path            = "/metadata/ui/entity-descriptors"
         }
         $result = Invoke-SMAXAPI @apiCallParameter
-        $Global:ENTITYDESCRIPTION = $result.entity_descriptors | Where-Object domain -NotMatch 'sample'
-    }
-    if ($RawDescription){
-        return $Global:ENTITYDESCRIPTION
-    }
+        return $result.entity_descriptors | Where-Object domain -NotMatch 'sample'
 }

@@ -1,4 +1,44 @@
 ﻿function New-SMAXEntity {
+    <#
+    .SYNOPSIS
+        Creates an empty entity object for Micro Focus SMAX.
+
+    .DESCRIPTION
+        The New-SMAXEntity function is used to create an empty entity object for use
+        with Micro Focus SMAX. It generates an object with the specified entity type
+        and includes all required properties. You can also select optional properties
+        to include in the object.
+
+    .PARAMETER Connection
+        Specifies the connection to the Micro Focus SMAX server. If not provided, it
+        will use the last saved connection obtained using the Get-SMAXLastConnection
+        function.
+
+    .PARAMETER EntityName
+        Specifies the name of the entity type for which the empty object is created.
+
+    .PARAMETER Properties
+        Specifies an array of property names to include in the empty entity object.
+
+    .PARAMETER ReturnMode
+        Specifies the return mode for the generated object. Valid values are HashTable,
+        Definition, and DefinitionCopyToClipboard. Default is HashTable.
+
+    .EXAMPLE
+        $emptyEntity = New-SMAXEntity -EntityName "Incident" -Properties "Title", "Description"
+
+        Description:
+        Creates an empty incident entity object with the specified properties.
+
+    .EXAMPLE
+        $emptyEntityDef = New-SMAXEntity -EntityName "Change" -Properties "Title", "ScheduledStartDate" -ReturnMode "Definition"
+
+        Description:
+        Generates a definition of an empty change entity object with specific properties.
+
+    .NOTES
+        Date:   September 28, 2023
+    #>
     [CmdletBinding()]
     param (
         [parameter(Mandatory = $false)]
@@ -28,8 +68,6 @@
         Write-PSFMessage -Level Warning "The following properties do not exist for Entities of type $($EntityName): $($nonExistingProperties -join ',')"
     }
     $propertiesToInclude = ($mandatoryProperties + ($optionalProperties | Where-Object name -in $Properties)) | Sort-Object -Property Name
-    $padLeft=($propertiesToInclude.name | Measure-Object -Maximum -Property Length).Maximum
-    # $padLeft=($propertiesToInclude.lname | Measure-Object -Maximum -Property Length).Maximum +1
     switch -Regex ($ReturnMode){
         '^HashTable$'{
             $result=@{}
@@ -38,6 +76,7 @@
             }
         }
         'Definition'{
+            $padLeft = ($propertiesToInclude.name | Measure-Object -Maximum -Property Length).Maximum
             $sb = [System.Text.StringBuilder]::new()
             [void]$sb.AppendLine( "`$$EntityName=@{" )
             [void]$sb.AppendFormat( "    # {0,$(-$padLeft+2)} = `"{1}`"   # Uncomment if converted to [PSCustomObject] later", @("PSTypeName", "SMAX.$EntityName") )

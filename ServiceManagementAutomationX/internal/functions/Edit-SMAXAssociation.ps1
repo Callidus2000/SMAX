@@ -1,37 +1,38 @@
 ﻿function Edit-SMAXAssociation {
     <#
     .SYNOPSIS
-    Modifies a MANY2MANY relationship between two entities.
+    Edits associations between entities in the Service Management Automation X (SMAX) platform.
 
     .DESCRIPTION
-    Modifies a MANY2MANY relationship between two entities (N:M).
+    The Edit-SMAXAssociation function allows you to create or delete associations between entities in SMAX.
+    You can specify the entity names, IDs, association type, operation (Create or Delete), and bulk operation parameters.
 
     .PARAMETER Connection
-    The connection to SMAX
+    Specifies the SMAX connection to use. If not provided, it uses the last established connection.
 
     .PARAMETER EnableException
-    If set to $true, an exception will be thrown in case of an error
+    Indicates whether exceptions should be enabled. By default, exceptions are enabled.
 
     .PARAMETER EntityName
-    The name of the entity (N)
+    Specifies the name of the source entity from which the association is created.
 
     .PARAMETER EntityId
-    The ID of the (N) entity
+    Specifies the ID of the source entity from which the association is created.
 
     .PARAMETER RemoteId
-    The ID of the remote entity (M) which is associated to the first (N)
+    Specifies the ID of the remote entity to associate with.
 
     .PARAMETER Association
-    The Name of the association attribute of the main entity (N)
+    Specifies the type of association between the entities.
 
     .PARAMETER Operation
-    Create/Delete: Should a new relation be added (Create) or removed (Delete)
+    Specifies the operation to perform on the associations. It can be "Create" or "Delete."
 
     .PARAMETER BulkID
-    For bulk processing: The ID of the current batch
+    Specifies the bulk operation ID when performing bulk association operations.
 
     .PARAMETER ExecuteBulk
-    For bulk processing: execute all stored changes
+    Indicates whether to execute a bulk association operation.
 
     .EXAMPLE
     Edit-SMAXAssociation -EntityName Request -EntityId 400551 -Association FollowedByUsers -remoteId 388154 -Operation Create

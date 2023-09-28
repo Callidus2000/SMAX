@@ -1,6 +1,48 @@
 ﻿function Connect-SMAX {
 	<#
 	.SYNOPSIS
+	Establishes a connection to the Service Management Automation X (SMAX) platform.
+
+	.DESCRIPTION
+	The Connect-SMAX function allows you to establish a connection to the SMAX platform
+	by providing the URL, tenant, and credentials. It also supports reusing an existing
+	SMAX connection.
+
+	.PARAMETER Url
+	Specifies the URL of the SMAX instance to connect to.
+
+	.PARAMETER Tenant
+	Specifies the tenant ID for the SMAX instance.
+
+	.PARAMETER Credential
+	Specifies the credentials used for authentication.
+
+	.PARAMETER OldConnection
+	Specifies an existing SMAX connection to reuse.
+
+	.PARAMETER SkipCheck
+	Specifies checks to skip during the connection process, such as certificate checks,
+	HTTP error checks, or header validation checks.
+
+	.PARAMETER EnableException
+	Indicates whether exceptions should be enabled. By default, exceptions are enabled.
+
+	.EXAMPLE
+	$connection=Connect-SMAX -Url $url -Credential $cred -Tenant 888220
+
+	Connect directly with a Credential-Object
+	.EXAMPLE
+	$connection=Connect-SMAX -Url $url -Credential $cred
+	$connection=Export-Clixml -Path ".\connection.xml"
+	$importedConnection=Import-Clixml -Path ".\connection.xml"
+	$secondConnection=Connect-SMAX -OldConnection $importedConnection
+
+	Connect with the information from a serialized object
+
+	.NOTES
+	#>
+	<#
+	.SYNOPSIS
 	Creates a new Connection Object to a SMAX instance.
 
 	.DESCRIPTION
@@ -8,6 +50,7 @@
 
 	.PARAMETER Credential
 	Credential-Object for direct login.
+
 	.PARAMETER Tenant
 	The Tenant ID for the connection
 
@@ -26,7 +69,7 @@
 	Should Exceptions been thrown?
 
 	.EXAMPLE
-	$connection=Connect-SMAX -Url $url -Credential $cred
+	$connection=Connect-SMAX -Url $url -Credential $cred -Tenant 888220
 
 	Connect directly with a Credential-Object
 	.EXAMPLE
@@ -45,7 +88,6 @@
 	[CmdletBinding(DefaultParameterSetName = "credential")]
 	Param (
 		[parameter(mandatory = $true, ParameterSetName = "credential")]
-		# [PSFramework.TabExpansion.PsfArgumentCompleterAttribute("SMAX.url")]
 		[string]$Url,
 		[parameter(mandatory = $true, ParameterSetName = "credential")]
 		[string]$Tenant,
@@ -59,14 +101,12 @@
 	)
 	if ($OldConnection) {
 		Write-PSFMessage "Getting parameters from existing (mistyped) Connection object"
-		# throw "ToBeImplemented"
 		$connection = Get-ARAHConnection -Url $OldConnection.ServerRoot -APISubPath "/rest/$($OldConnection.tenantId)"
 		if ($SkipCheck) { $connection.SkipCheck = $SkipCheck }
 		Add-Member -InputObject $connection -MemberType NoteProperty -Name "tenantId" -Value $OldConnection.tenantId
 		Add-Member -InputObject $connection -MemberType NoteProperty -Name "psfConfPrefix" -Value $OldConnection.psfConfPrefix
 		Set-PSFConfig -Module 'ServiceManagementAutomationX' -Name 'lastConfPrefix' -Value $OldConnection.psfConfPrefix -AllowDelete -Validation string -Description "The last connection prefix; needed for TEPP if no connection available" -PassThru | Register-PSFConfig -Scope UserDefault
 
-		# $connection.credential = $Credential
 		$token = $OldConnection.authCookie.Value
 		$connection.ContentType = "application/json;charset=UTF-8"
 		$connection.authenticatedUser = $OldConnection.authenticatedUser
@@ -85,7 +125,6 @@
 	Add-Member -InputObject $connection -MemberType NoteProperty -Name "psfConfPrefix" -Value $psfConfPrefix
 	Set-PSFConfig -Module 'ServiceManagementAutomationX' -Name 'lastConfPrefix' -Value $psfConfPrefix -AllowDelete -Validation string -Description "The last connection prefix; needed for TEPP if no connection available" -PassThru | Register-PSFConfig -Scope UserDefault
 
-	# $connection.credential = $Credential
 	$connection.ContentType = "application/json;charset=UTF-8"
 	$connection.authenticatedUser = $Credential.UserName
 	$restParam = @{
@@ -94,12 +133,8 @@
 		Method      = "Post"
 		Body        = (@{login = $Credential.UserName ; password = $Credential.GetNetworkCredential().Password } | ConvertTo-Json)
 	}
-	# Write-PSFMessage "`$restParam=$($restParam|ConvertTo-Json -Compress)"
-	# $token = Invoke-RestMethod -Uri "$($connection.WebServiceRoot)/auth/authentication-endpoint/authenticate/token" -ContentType $ContentType -Method Post -Body $Body -SkipCertificateCheck
 	$token = Invoke-RestMethod @restParam
 
-	# Invoke-PSFProtectedCommand -ActionString "Connect-SMAX.Connecting" -ActionStringValues $Url -Target $Url -ScriptBlock {
-	# $result = Invoke-SMAXAPI @apiCallParameter -verbose
 	if ($null -eq $token) {
 		Stop-PSFFunction -Message "No API Results" -EnableException $EnableException -FunctionName $functionName
 	}
@@ -108,51 +143,7 @@
 	$Cookie.Value = $token # Add the value of the cookie
 	$Cookie.Domain = ([System.Uri]$restParam.uri).DnsSafeHost
 	Add-Member -InputObject $connection -MemberType NoteProperty -Name "authCookie" -Value $Cookie
-	# $connection.WebSession.Cookies.add($Cookie)
 
-	# Add-Member -InputObject $connection -MemberType ScriptMethod -Name "Refresh" -Value {
-	# 	$functionName = "Connect-SMAX>Refresh"
-	# 	Write-PSFMessage "Stelle Verbindung her zu $($this.ServerRoot)" -Target $this.ServerRoot -FunctionName $functionName
-
-	# 	$apiCallParameter = @{
-	# 		Connection          = $this
-	# 		EnableException     = $this.forti.EnableException
-	# 		method              = "exec"
-	# 		Path                = "sys/login/user"
-	# 		LoggingAction       = "Connect-SMAX"
-	# 		LoggingActionValues = @($this.ServerRoot, $this.Credential.UserName)
-	# 		Parameter           = @{
-	# 			"data" = @{
-	# 				"passwd" = $this.Credential.GetNetworkCredential().Password
-	# 				"user"   = $this.Credential.UserName
-	# 			}
-	# 		}
-	# 	}
-
-	# 	# Invoke-PSFProtectedCommand -ActionString "Connect-SMAX.Connecting" -ActionStringValues $Url -Target $Url -ScriptBlock {
-	# 	$result = Invoke-SMAXAPI @apiCallParameter
-	# 	if ($null -eq $result) {
-	# 		Stop-PSFFunction -Message "No API Results" -EnableException $EnableException -FunctionName $functionName
-	# 	}
-	# 	# } -PSCmdlet $PSCmdlet  -EnableException $EnableException
-	# 	if (Test-PSFFunctionInterrupt) {
-	# 		Write-PSFMessage "Test-PSFFunctionInterrupt" -FunctionName $functionName
-	# 		return
-	# 	}
-	# 	if ($result.session) {
-	# 		$this.forti.session = $result.session
-	# 	}
-	# }
-	# switch ($PsCmdlet.ParameterSetName) {
-	# 	'credential' {
-	# 		$connection.Refresh()
-	# 	}
-	# 	'oldConnection' {}
-	# }
-	# if ($connection.forti.session) {
-	# 	Write-PSFMessage -string "Connect-SMAX.Connected"
 	Set-PSFConfig -Module 'ServiceManagementAutomationX' -Name 'LastConnection' -Value $connection -Description "Last known Connection" -AllowDelete
 	return $connection
-	# }
-	# Write-PSFMessage -string "Connect-SMAX.NotConnected" -Level Warning
 }

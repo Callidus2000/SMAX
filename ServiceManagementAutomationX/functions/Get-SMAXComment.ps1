@@ -1,4 +1,34 @@
 ﻿function Get-SMAXComment {
+    <#
+    .SYNOPSIS
+    Retrieves all comments of a given entity
+
+    .DESCRIPTION
+    Retrieves all comments of a given entity
+
+    .PARAMETER Connection
+    The connection to SMAX
+
+    .PARAMETER EnableException
+    If set to $true, an exception will be thrown in case of an error
+
+    .PARAMETER EntityName
+    The name of the entity
+
+    .PARAMETER Id
+    The Id of the entity
+
+    .PARAMETER PrivacyType
+    Filter the comments based on the privavy types 'Public', 'Internal'
+
+    .EXAMPLE
+    Get-SMAXComment -Connection $connection -EntityName Request -Id 374344
+
+    Retrieves all comments of Request 374344
+
+    .NOTES
+    General notes
+    #>
     [CmdletBinding()]
     param (
         [parameter(Mandatory = $false)]
@@ -28,15 +58,8 @@
         $apiCallParameter.URLParameter.PrivacyType=$PrivacyType.ToUpper()
     }
     Write-PSFMessage "`$apiCallParameter=$($apiCallParameter|ConvertTo-Json)"
-    $result = Invoke-SMAXAPI @apiCallParameter #| Where-Object { $_.properties}
-    # foreach ($item in $result) {
-    #     Add-Member -InputObject $item.properties -MemberType NoteProperty -Name related -Value $item.related_properties
-    #     $item.properties.PSObject.TypeNames.Insert(0, "SMAX.$($item.entity_type)")
-    # }
-    # if($FlattenResult){
-    #     return $result.properties|ConvertTo-SMAXFlatObject
-    # }
+    $result = Invoke-SMAXAPI @apiCallParameter
 
-    return $result #.properties
+    return $result
 
 }

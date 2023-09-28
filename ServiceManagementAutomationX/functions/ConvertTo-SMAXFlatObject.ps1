@@ -1,4 +1,41 @@
 ﻿function ConvertTo-SMAXFlatObject {
+    <#
+    .SYNOPSIS
+    Converts a multi-level HashMap/Object to a single level HashMap.
+
+    .DESCRIPTION
+    Converts a multi-level HashMap/Object to a single level HashMap.
+
+    .PARAMETER InputObject
+    The original HashMap/Object
+
+    .PARAMETER Prefix
+    Should the keys get a prefix?
+
+    .PARAMETER ReturnMode
+    Either 'HashTable' or 'CustomObject' (Default)
+
+    .EXAMPLE
+    @{
+       hubba="Bubba"
+       one=@{
+           second=@{
+               third="Nr3"
+           }
+           secondHalf="Life"
+       }
+    }| ConvertTo-SMAXFlatObject | ConvertTo-Json
+
+    Returns
+    {
+    "one.secondHalf": "Life",
+    "one.second.third": "Nr3",
+    "hubba": "Bubba"
+    }
+
+    .NOTES
+    General notes
+    #>
     [CmdletBinding()]
     param (
         [parameter(mandatory = $true, ValueFromPipeline = $true, ParameterSetName = "default")]

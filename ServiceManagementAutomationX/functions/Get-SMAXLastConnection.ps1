@@ -1,22 +1,27 @@
 ﻿function Get-SMAXLastConnection {
-    <#
-    .SYNOPSIS
-    Gets the last connection as default for other function parameters
+  <#
+  .SYNOPSIS
+      Retrieves the last saved connection to the Micro Focus SMAX server.
 
-    .DESCRIPTION
-    Long description
+  .DESCRIPTION
+      The Get-SMAXLastConnection function retrieves the last saved connection to
+      the Micro Focus SMAX server from the configuration. It is used to reuse
+      previously configured connections when interacting with the SMAX API.
 
-    .PARAMETER EnableException
-    Should Exceptions been thrown?
+  .PARAMETER EnableException
+      Indicates whether to enable exception handling. If set to $true (default),
+      the function will throw an exception when there is no last saved connection.
+      If set to $false, it will return $null when no last connection is available.
 
-    .EXAMPLE
-    An example
+  .EXAMPLE
+      Get-SMAXLastConnection
 
-    may be provided later
+      Description:
+      Retrieves the last saved connection to the Micro Focus SMAX server.
 
-    .NOTES
-    General notes
-    #>
+  .NOTES
+      Date:   September 28, 2023
+  #>
     [CmdletBinding()]
     param (
 		[bool]$EnableException = $true

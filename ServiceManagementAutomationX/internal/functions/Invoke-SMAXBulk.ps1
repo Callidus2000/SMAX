@@ -1,4 +1,64 @@
 ﻿function Invoke-SMAXBulk {
+    <#
+    .SYNOPSIS
+    Performs bulk create or update operations on entities in the Service Management Automation X (SMAX) platform.
+
+    .DESCRIPTION
+    The Invoke-SMAXBulk function allows you to perform bulk create or update operations on SMAX entities.
+    You can specify the entity name, input objects, and the operation type (Create or Update).
+
+    .PARAMETER Connection
+    Specifies the SMAX connection to use. If not provided, it uses the last established connection.
+
+    .PARAMETER EnableException
+    Indicates whether exceptions should be enabled. By default, exceptions are enabled.
+
+    .PARAMETER EntityName
+    Specifies the name of the entity for which the bulk operation is performed.
+
+    .PARAMETER InputObject
+    Specifies the entities to be created or updated. You can provide an array of SMAX entity objects.
+    They all have to be from the EntityName type
+
+    .PARAMETER Operation
+    Specifies the operation type. It can be either "Create" or "Update."
+
+    .EXAMPLE
+    PS C:\> $newEntities = @(
+        @{
+            Title = "New Incident 1"
+            Description = "This is a new incident 1"
+            Category = "Service Request"
+        },
+        @{
+            Title = "New Incident 2"
+            Description = "This is a new incident 2"
+            Category = "Incident"
+        }
+    )
+    PS C:\> Invoke-SMAXBulk -Connection $conn -EntityName "Incident" -InputObject $newEntities -Operation "Create"
+
+    This example performs a bulk creation operation for two new incidents.
+
+    .EXAMPLE
+    PS C:\> $updatedEntities = @(
+        @{
+            Id = 123
+            Title = "Updated Incident 1"
+        },
+        @{
+            Id = 456
+            Title = "Updated Incident 2"
+        }
+    )
+    PS C:\> Invoke-SMAXBulk -Connection $conn -EntityName "Incident" -InputObject $updatedEntities -Operation "Update"
+
+    This example performs a bulk update operation for two existing incidents.
+
+    .NOTES
+    File Name      : Invoke-SMAXBulk.ps1
+
+    #>
     [CmdletBinding()]
     param (
         [parameter(Mandatory = $false)]
@@ -19,27 +79,9 @@
             Stop-PSFFunction -EnableException $EnableException -Message "SMAX Entitymodel not initialized, please run Initialize-SMAXEntityModel"
         }
         Write-PSFMessage "Load Definition $(Get-SMAXConfPrefix -Connection $Connection).entityDefinition"
-        # $definitions|json|Set-Clipboard
-        # Write-PSFMessage "BeginBulk `$InputObject.Gettype(): $($InputObject.GetType())"
-        # Write-PSFMessage "BeginBulk `$InputObject: $($InputObject|ConvertTo-Json -Compress -Depth 4)"
-        # $InputObject | ForEach-Object { "BeginBulk $($_.Id), Typenames= $($_.psobject.TypeNames -join ',')" | Out-Host }
     }
     process {
         Write-PSFMessage "processing `$InputObject: $($InputObject|ConvertTo-Json -Compress -Depth 4)"
-        # if ([string]::IsNullOrEmpty($EntityName)) {
-        #     Write-PSFMessage "Checking if each data object has set a PSDatatype"
-        #     foreach ($obj in $InputObject) {
-        #         $InputObject | ForEach-Object { "ProcessBulk $($obj.Id), Typenames= $($obj.psobject.TypeNames -join ',')" | Out-Host }
-        #         $countWithTypenames = ($obj | Where-Object { $_.psobject.TypeNames -match '^SMAX' } | Measure-Object).count
-        #         $InputObjectCount = ($obj | Measure-Object).count
-        #         Write-PSFMessage "`$InputObjectCount=$obj, `$countWithTypenames=$countWithTypenames"
-        #         if ($countWithTypenames -ne $InputObjectCount) {
-        #             Stop-PSFFunction -EnableException $EnableException -Message "Neither `$_.PSDataType nor -EntityName param set"
-        #             $entityList.Clear()
-        #             return
-        #         }
-        #     }
-        # }
         foreach ($obj in $InputObject) {
             Write-PSFMessage "processing `$Obj: $($obj|ConvertTo-Json -Compress -Depth 4)"
             $localEntityName = $obj.psobject.TypeNames -match '^SMAX' -replace 'SMAX\.' | Select-Object -First 1
@@ -66,7 +108,6 @@
         Write-PSFMessage "$($entityList|ConvertTo-Json)"
         $apiCallParameter = @{
             EnableException        = $EnableException
-            # EnablePaging           = $EnablePaging
             Connection             = $Connection
             ConvertJsonAsHashtable = $false
             LoggingAction          = "Invoke-SMAXBulk"

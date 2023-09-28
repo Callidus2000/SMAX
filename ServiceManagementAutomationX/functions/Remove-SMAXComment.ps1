@@ -1,4 +1,57 @@
 ﻿function Remove-SMAXComment {
+    <#
+    .SYNOPSIS
+    Removes a comment associated with an entity in Micro Focus SMAX.
+
+    .DESCRIPTION
+    The Remove-SMAXComment function allows you to remove a comment associated with an entity in Micro Focus SMAX.
+    You can remove a comment either by specifying the entity and comment details or by providing the entity's ID
+    and the comment's ID.
+
+    .PARAMETER Connection
+    Specifies the connection to the Micro Focus SMAX server. If not provided, it will use the last saved
+    connection obtained using the Get-SMAXLastConnection function.
+
+    .PARAMETER EnableException
+    Indicates whether exceptions should be enabled. Default is $true.
+
+    .PARAMETER EntityName
+    Specifies the name of the entity for which the comment needs to be removed. Use this parameter in the
+    "byEntity" parameter set.
+
+    .PARAMETER Id
+    Specifies the ID of the entity for which the comment needs to be removed. Use this parameter in the
+    "byEntity" parameter set.
+
+    .PARAMETER Comment
+    Specifies the comment object to be removed. Use this parameter in the "byEntity" parameter set. The
+    object must include the .Id property
+
+    .PARAMETER CommentId
+    Specifies the ID of the comment to be removed. Use this parameter in the "byEntityId" parameter set.
+
+    .EXAMPLE
+    # Remove a comment associated with an entity using the entity's details.
+    $commentObject = @{
+        id = "123456"
+        body = "This is a test comment."
+    }
+    Remove-SMAXComment -EntityName "Incident" -Id "789" -Comment $commentObject
+
+    Description:
+    Removes the comment specified by the comment object associated with the Incident with ID 789.
+
+    .EXAMPLE
+    # Remove a comment associated with an entity using the entity's ID and comment's ID.
+    Remove-SMAXComment -EntityName "Change" -CommentId "987654" -Id "456"
+
+    Description:
+    Removes the comment with ID 987654 associated with the Change with ID 456.
+
+    .NOTES
+    Date: September 28, 2023
+    #>
+
     [CmdletBinding()]
     param (
         [parameter(Mandatory = $false)]

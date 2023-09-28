@@ -1,49 +1,74 @@
 ﻿function Remove-SMAXAssociation {
     <#
     .SYNOPSIS
-    Removes a MANY2MANY relationship between two entities.
+        Removes an association between entities in Micro Focus SMAX.
 
     .DESCRIPTION
-    Removes a MANY2MANY relationship between two entities (N:M).
+        The Remove-SMAXAssociation function allows you to remove an association between
+        entities in Micro Focus SMAX. You can remove a single association or perform
+        bulk association removal by specifying parameters accordingly.
 
     .PARAMETER Connection
-    The connection to SMAX
+        Specifies the connection to the Micro Focus SMAX server. If not provided, it
+        will use the last saved connection obtained using the Get-SMAXLastConnection
+        function.
 
     .PARAMETER EnableException
-    If set to $true, an exception will be thrown in case of an error
+        Indicates whether exceptions should be enabled. Default is $true.
 
     .PARAMETER EntityName
-    The name of the entity (N)
+        Specifies the name of the entity for which the association needs to be removed.
 
     .PARAMETER EntityId
-    The ID of the (N) entity
+        Specifies the ID of the entity from which the association originates.
 
     .PARAMETER RemoteId
-    The ID of the remote entity (M) which is associated to the first (N)
+        Specifies the ID of the remote entity involved in the association.
 
     .PARAMETER Association
-    The Name of the association attribute of the main entity (N)
+        Specifies the type of association to be removed.
 
     .PARAMETER BulkID
-    For bulk processing: The ID of the current batch
+        Specifies the bulk operation ID when performing bulk association removal.
 
     .PARAMETER ExecuteBulk
-    For bulk processing: execute all stored changes
+        Indicates whether to execute the bulk association removal operation.
 
     .EXAMPLE
-    Remove-SMAXAssociation -EntityName Request -EntityId 400551 -Association FollowedByUsers -remoteId 388154
+        # Remove a single association between two entities.
+        Remove-SMAXAssociation -EntityName "Incident" -EntityId 123 -RemoteId 456 -Association "RelatedIncident"
 
-    Removes the person 388154 to the Request 400551 as a follower.
+        Description:
+        Removes the "RelatedIncident" association between the Incident with EntityId 123
+        and the Incident with EntityId 456.
 
     .EXAMPLE
-    Remove-SMAXAssociation -EntityName Request -EntityId 400551 -Association FollowedByUsers -remoteId 388154 -BulkID MyBulk
-    Remove-SMAXAssociation -EntityName Request -EntityId 400551 -Association FollowedByUsers -remoteId 115 -BulkID MyBulk
-    Remove-SMAXAssociation -BulkID MyBulk -ExecuteBatch
+        # Build a bulk association removal operation.
+        $bulkParams = @{
+            EntityName = "Change"
+            EntityId   = 789
+            RemoteId   = 987
+            Association = "RelatedChange"
+            BulkID     = "BulkOperation123"
+        }
+        Remove-SMAXAssociation @bulkParams
+        $bulkParams = @{
+            EntityName = "Change"
+            EntityId   = 789
+            RemoteId   = 123
+            Association = "RelatedChange"
+            BulkID     = "BulkOperation123"
+        }
+        Remove-SMAXAssociation @bulkParams
+        Remove-SMAXAssociation -BulkID "BulkOperation123" -ExecuteBulk
 
-    Removes the persons 388154 and 115 to the Request 400551 as a follower in a single web request.
+        Description:
+        Builds a bulk association removal operation to remove the "RelatedChange"
+        association between the Change with EntityId 789 and the Change with EntityId 987 and 123
+        in a single web request.
 
     .NOTES
-    General notes
+        Date:   September 28, 2023
     #>
     [CmdletBinding()]
     param (

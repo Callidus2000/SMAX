@@ -43,9 +43,6 @@
             if ($result.meta.completion_status -ne 'OK') {
                 Write-PSFMessage -Level Warning "completion_status NOT OK, $($result.meta |ConvertTo-Json -Compress)"
             }
-            # foreach ($item in $allItems){
-            #     Add-Member -InputObject $item.properties -MemberType NoteProperty -Name related -Value $item.related_properties
-            # }
             return $allItems
         }
     }

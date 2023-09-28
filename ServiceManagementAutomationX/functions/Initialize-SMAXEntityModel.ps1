@@ -1,4 +1,43 @@
 ﻿function Initialize-SMAXEntityModel {
+    <#
+    .SYNOPSIS
+        Initializes the Micro Focus SMAX entity model for improved performance.
+
+    .DESCRIPTION
+        The Initialize-SMAXEntityModel function initializes the entity model for the
+        Micro Focus SMAX API. It retrieves and processes entity definitions, properties,
+        associations, and translations from the SMAX server's metadata. The resulting
+        data is stored in the PSFramework configuration for improved performance and
+        ease of use when working with SMAX entities.
+
+    .PARAMETER Connection
+        Specifies the connection to the Micro Focus SMAX server. If not provided, it
+        will use the last saved connection obtained using the Get-SMAXLastConnection
+        function.
+
+    .PARAMETER EnableException
+        Indicates whether to enable exception handling. If set to $true (default),
+        the function will throw exceptions on API errors. If set to $false, it will
+        return error information as part of the result.
+
+    .PARAMETER Persist
+        If specified, the configuration settings for the SMAX entity model will be
+        persisted in the user's default configuration scope.
+
+    .PARAMETER ExportDevJson
+        If specified, the configuration settings for the SMAX entity model will be
+        exported to JSON files for development and debugging purposes.
+
+    .EXAMPLE
+        Initialize-SMAXEntityModel -Connection $MyConnection -Persist -ExportDevJson
+
+        Description:
+        Initializes the SMAX entity model using a specific SMAX connection, persists
+        the configuration settings, and exports them to JSON files for development.
+
+    .NOTES
+        Date:   September 28, 2023
+    #>
     [CmdletBinding()]
     param (
         [parameter(Mandatory = $false)]
