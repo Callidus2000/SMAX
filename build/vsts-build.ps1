@@ -34,7 +34,7 @@ if (-not $WorkingDirectory) { $WorkingDirectory = Split-Path $PSScriptRoot }
 #endregion Handle Working Directory Defaults
 
 # Prepare publish folder
-Write-PSFMessage -Level Important -Message "Creating and populating publishing directory"
+# write-psfmessage -Level Important -Message "Creating and populating publishing directory"
 $publishDir = New-Item -Path $WorkingDirectory -Name publish -ItemType Directory -Force
 Copy-Item -Path "$($WorkingDirectory)\SMAX" -Destination $publishDir.FullName -Recurse -Force
 
@@ -85,7 +85,7 @@ $fileData = $fileData.Replace('"<compile code into here>"', ($text -join "`n`n")
 #region Updating the Module Version
 if ($AutoVersion)
 {
-	Write-PSFMessage -Level Important -Message "Updating module version numbers."
+	# write-psfmessage -Level Important -Message "Updating module version numbers."
 	try { [version]$remoteVersion = (Find-Module 'SMAX' -Repository $Repository -ErrorAction Stop).Version }
 	catch
 	{
@@ -106,15 +106,15 @@ if ($SkipPublish) { return }
 if ($LocalRepo)
 {
 	# Dependencies must go first
-	Write-PSFMessage -Level Important -Message "Creating Nuget Package for module: PSFramework"
+	# write-psfmessage -Level Important -Message "Creating Nuget Package for module: PSFramework"
 	New-PSMDModuleNugetPackage -ModulePath (Get-Module -Name PSFramework).ModuleBase -PackagePath .
-	Write-PSFMessage -Level Important -Message "Creating Nuget Package for module: SMAX"
+	# write-psfmessage -Level Important -Message "Creating Nuget Package for module: SMAX"
 	New-PSMDModuleNugetPackage -ModulePath "$($publishDir.FullName)\SMAX" -PackagePath .
 }
 else
 {
 	# Publish to Gallery
-	Write-PSFMessage -Level Important -Message "Publishing the SMAX module to $($Repository)"
+	# write-psfmessage -Level Important -Message "Publishing the SMAX module to $($Repository)"
 	Publish-Module -Path "$($publishDir.FullName)\SMAX" -NuGetApiKey $ApiKey -Force -Repository $Repository
 }
 #endregion Publish
