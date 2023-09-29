@@ -1,9 +1,9 @@
 ﻿$script:ModuleRoot = $PSScriptRoot
-$script:ModuleVersion = (Import-PowerShellDataFile -Path "$($script:ModuleRoot)\ServiceManagementAutomationX.psd1").ModuleVersion
+$script:ModuleVersion = (Import-PowerShellDataFile -Path "$($script:ModuleRoot)\SMAX.psd1").ModuleVersion
 
 # Detect whether at some level dotsourcing was enforced
-$script:doDotSource = Get-PSFConfigValue -FullName ServiceManagementAutomationX.Import.DoDotSource -Fallback $false
-if ($ServiceManagementAutomationX_dotsourcemodule) { $script:doDotSource = $true }
+$script:doDotSource = Get-PSFConfigValue -FullName SMAX.Import.DoDotSource -Fallback $false
+if ($SMAX_dotsourcemodule) { $script:doDotSource = $true }
 
 <#
 Note on Resolve-Path:
@@ -14,29 +14,29 @@ This is important when testing for paths.
 #>
 
 # Detect whether at some level loading individual module files, rather than the compiled module was enforced
-$importIndividualFiles = Get-PSFConfigValue -FullName ServiceManagementAutomationX.Import.IndividualFiles -Fallback $false
-if ($ServiceManagementAutomationX_importIndividualFiles) { $importIndividualFiles = $true }
+$importIndividualFiles = Get-PSFConfigValue -FullName SMAX.Import.IndividualFiles -Fallback $false
+if ($SMAX_importIndividualFiles) { $importIndividualFiles = $true }
 if (Test-Path (Resolve-PSFPath -Path "$($script:ModuleRoot)\..\.git" -SingleItem -NewChild)) { $importIndividualFiles = $true }
 if ("<was not compiled>" -eq '<was not compiled>') { $importIndividualFiles = $true }
-	
+
 function Import-ModuleFile
 {
 	<#
 		.SYNOPSIS
 			Loads files into the module on module import.
-		
+
 		.DESCRIPTION
 			This helper function is used during module initialization.
 			It should always be dotsourced itself, in order to proper function.
-			
+
 			This provides a central location to react to files being imported, if later desired
-		
+
 		.PARAMETER Path
 			The path to the file to load
-		
+
 		.EXAMPLE
 			PS C:\> . Import-ModuleFile -File $function.FullName
-	
+
 			Imports the file stored in $function according to import policy
 	#>
 	[CmdletBinding()]
@@ -44,7 +44,7 @@ function Import-ModuleFile
 		[string]
 		$Path
 	)
-	
+
 	$resolvedPath = $ExecutionContext.SessionState.Path.GetResolvedPSPathFromPSPath($Path).ProviderPath
 	if ($doDotSource) { . $resolvedPath }
 	else { $ExecutionContext.InvokeCommand.InvokeScript($false, ([scriptblock]::Create([io.file]::ReadAllText($resolvedPath))), $null, $null) }
@@ -57,24 +57,24 @@ if ($importIndividualFiles)
 	foreach ($path in (& "$ModuleRoot\internal\scripts\preimport.ps1")) {
 		. Import-ModuleFile -Path $path
 	}
-	
+
 	# Import all internal functions
 	foreach ($function in (Get-ChildItem "$ModuleRoot\internal\functions" -Filter "*.ps1" -Recurse -ErrorAction Ignore))
 	{
 		. Import-ModuleFile -Path $function.FullName
 	}
-	
+
 	# Import all public functions
 	foreach ($function in (Get-ChildItem "$ModuleRoot\functions" -Filter "*.ps1" -Recurse -ErrorAction Ignore))
 	{
 		. Import-ModuleFile -Path $function.FullName
 	}
-	
+
 	# Execute Postimport actions
 	foreach ($path in (& "$ModuleRoot\internal\scripts\postimport.ps1")) {
 		. Import-ModuleFile -Path $path
 	}
-	
+
 	# End it here, do not load compiled code below
 	return
 }

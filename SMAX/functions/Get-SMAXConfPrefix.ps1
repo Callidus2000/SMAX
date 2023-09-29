@@ -25,6 +25,6 @@
         Write-PSFMessage "Returning Prefix from Connection"
         return $Connection.psfConfPrefix
     }
-    Write-PSFMessage "Returning Prefix from ServiceManagementAutomationX.lastConfPrefix"
-    Get-PSFConfigValue -FullName 'ServiceManagementAutomationX.lastConfPrefix'
+    Write-PSFMessage "Returning Prefix from SMAX.lastConfPrefix"
+    Get-PSFConfigValue -FullName 'SMAX.lastConfPrefix'
 }

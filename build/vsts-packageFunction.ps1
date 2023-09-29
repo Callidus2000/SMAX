@@ -2,29 +2,29 @@
 <#
 	.SYNOPSIS
 		Packages an Azure Functions project, ready to release.
-	
+
 	.DESCRIPTION
 		Packages an Azure Functions project, ready to release.
 		Should be part of the release pipeline, after ensuring validation.
 
 		Look into the 'AzureFunctionRest' template for generating functions for the module if you do.
-	
+
 	.PARAMETER WorkingDirectory
 		The root folder to work from.
-	
+
 	.PARAMETER Repository
 		The name of the repository to use for gathering dependencies from.
 #>
 param (
-	$WorkingDirectory = "$($env:SYSTEM_DEFAULTWORKINGDIRECTORY)\_ServiceManagementAutomationX",
-	
+	$WorkingDirectory = "$($env:SYSTEM_DEFAULTWORKINGDIRECTORY)\_SMAX",
+
 	$Repository = 'PSGallery',
 
 	[switch]
 	$IncludeAZ
 )
 
-$moduleName = 'ServiceManagementAutomationX'
+$moduleName = 'SMAX'
 
 # Prepare Paths
 Write-PSFMessage -Level Host -Message "Creating working folders"
@@ -59,7 +59,7 @@ foreach ($functionSourceFile in (Get-ChildItem -Path "$($moduleRoot)\$moduleName
 	Write-PSFMessage -Level Host -Message "  Processing function: $functionSourceFile"
 	$condensedName = $functionSourceFile.BaseName -replace '-', ''
 	$functionFolder = New-Item -Path $workingRoot.FullName -Name $condensedName -ItemType Directory
-	
+
 	#region Load Overrides
 	$override = @{ }
 	if (Test-Path -Path "$($WorkingDirectory)\azFunctionResources\functionOverride\$($functionSourceFile.BaseName).psd1")
@@ -71,11 +71,11 @@ foreach ($functionSourceFile in (Get-ChildItem -Path "$($moduleRoot)\$moduleName
 		$override = Import-PowerShellDataFile -Path "$($WorkingDirectory)\azFunctionResources\functionOverride\$($condensedName).psd1"
 	}
 	#endregion Load Overrides
-	
+
 	#region Create Function Configuration
 	$restMethods = 'get', 'post'
 	if ($override.RestMethods) { $restMethods = $override.RestMethods }
-	
+
 	Set-Content -Path "$($functionFolder.FullName)\function.json" -Value @"
 {
     "bindings": [
@@ -99,7 +99,7 @@ foreach ($functionSourceFile in (Get-ChildItem -Path "$($moduleRoot)\$moduleName
 }
 "@
 	#endregion Create Function Configuration
-	
+
 	#region Override Function Configuration
 	if (Test-Path -Path "$($WorkingDirectory)\azFunctionResources\functionOverride\$($functionSourceFile.BaseName).json")
 	{
@@ -110,7 +110,7 @@ foreach ($functionSourceFile in (Get-ChildItem -Path "$($moduleRoot)\$moduleName
 		Copy-Item -Path "$($WorkingDirectory)\azFunctionResources\functionOverride\$($condensedName).json" -Destination "$($functionFolder.FullName)\function.json" -Force
 	}
 	#endregion Override Function Configuration
-	
+
 	# Generate the run.ps1 file
 	$runText = $runTemplate -replace '%functionname%', $functionSourceFile.BaseName
 	$runText | Set-Content -Path "$($functionFolder.FullName)\run.ps1" -Encoding UTF8

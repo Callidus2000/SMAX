@@ -26,7 +26,7 @@
     param (
 		[bool]$EnableException = $true
     )
-    $connection = Get-PSFConfigValue -FullName 'ServiceManagementAutomationX.LastConnection'
+    $connection = Get-PSFConfigValue -FullName 'SMAX.LastConnection'
     if ($null -eq $connection -and $EnableException){
         throw "No last connection available"
     }

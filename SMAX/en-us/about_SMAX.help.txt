@@ -1,0 +1,11 @@
+﻿TOPIC
+	about_SMAX
+
+SHORT DESCRIPTION
+	Explains how to use the SMAX powershell module
+
+LONG DESCRIPTION
+	<Insert Content here>
+
+KEYWORDS
+	SMAX

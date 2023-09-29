@@ -105,7 +105,7 @@
 		if ($SkipCheck) { $connection.SkipCheck = $SkipCheck }
 		Add-Member -InputObject $connection -MemberType NoteProperty -Name "tenantId" -Value $OldConnection.tenantId
 		Add-Member -InputObject $connection -MemberType NoteProperty -Name "psfConfPrefix" -Value $OldConnection.psfConfPrefix
-		Set-PSFConfig -Module 'ServiceManagementAutomationX' -Name 'lastConfPrefix' -Value $OldConnection.psfConfPrefix -AllowDelete -Validation string -Description "The last connection prefix; needed for TEPP if no connection available" -PassThru | Register-PSFConfig -Scope UserDefault
+		Set-PSFConfig -Module 'SMAX' -Name 'lastConfPrefix' -Value $OldConnection.psfConfPrefix -AllowDelete -Validation string -Description "The last connection prefix; needed for TEPP if no connection available" -PassThru | Register-PSFConfig -Scope UserDefault
 
 		$token = $OldConnection.authCookie.Value
 		$connection.ContentType = "application/json;charset=UTF-8"
@@ -115,15 +115,15 @@
 		$Cookie.Value = $token # Add the value of the cookie
 		$Cookie.Domain = ([System.Uri]$OldConnection.ServerRoot).DnsSafeHost
 		Add-Member -InputObject $connection -MemberType NoteProperty -Name "authCookie" -Value $Cookie
-		Set-PSFConfig -Module 'ServiceManagementAutomationX' -Name 'LastConnection' -Value $connection -Description "Last known Connection" -AllowDelete
+		Set-PSFConfig -Module 'SMAX' -Name 'LastConnection' -Value $connection -Description "Last known Connection" -AllowDelete
 		return $connection
 	}
 	$connection = Get-ARAHConnection -Url $Url -APISubPath "/rest/$Tenant"
 	if ($SkipCheck) { $connection.SkipCheck = $SkipCheck }
 	Add-Member -InputObject $connection -MemberType NoteProperty -Name "tenantId" -Value $Tenant
-	$psfConfPrefix = ("ServiceManagementAutomationX." + (([System.Uri]$connection.WebServiceRoot).DnsSafeHost -replace '\.', '_') + ".$Tenant")
+	$psfConfPrefix = ("SMAX." + (([System.Uri]$connection.WebServiceRoot).DnsSafeHost -replace '\.', '_') + ".$Tenant")
 	Add-Member -InputObject $connection -MemberType NoteProperty -Name "psfConfPrefix" -Value $psfConfPrefix
-	Set-PSFConfig -Module 'ServiceManagementAutomationX' -Name 'lastConfPrefix' -Value $psfConfPrefix -AllowDelete -Validation string -Description "The last connection prefix; needed for TEPP if no connection available" -PassThru | Register-PSFConfig -Scope UserDefault
+	Set-PSFConfig -Module 'SMAX' -Name 'lastConfPrefix' -Value $psfConfPrefix -AllowDelete -Validation string -Description "The last connection prefix; needed for TEPP if no connection available" -PassThru | Register-PSFConfig -Scope UserDefault
 
 	$connection.ContentType = "application/json;charset=UTF-8"
 	$connection.authenticatedUser = $Credential.UserName
@@ -144,6 +144,6 @@
 	$Cookie.Domain = ([System.Uri]$restParam.uri).DnsSafeHost
 	Add-Member -InputObject $connection -MemberType NoteProperty -Name "authCookie" -Value $Cookie
 
-	Set-PSFConfig -Module 'ServiceManagementAutomationX' -Name 'LastConnection' -Value $connection -Description "Last known Connection" -AllowDelete
+	Set-PSFConfig -Module 'SMAX' -Name 'LastConnection' -Value $connection -Description "Last known Connection" -AllowDelete
 	return $connection
 }

@@ -5,19 +5,19 @@
 *TempPoint*
 
 # Ignore staging info from Visual Studio
-library/ServiceManagementAutomationX/.vs/*
-library/ServiceManagementAutomationX/ServiceManagementAutomationX/bin/*
-library/ServiceManagementAutomationX/ServiceManagementAutomationX/obj/*
+library/SMAX/.vs/*
+library/SMAX/SMAX/bin/*
+library/SMAX/SMAX/obj/*
 
 # ignore PowerShell Studio MetaData
-ServiceManagementAutomationX/ServiceManagementAutomationX.psproj
-ServiceManagementAutomationX/ServiceManagementAutomationX.psproj.bak
-ServiceManagementAutomationX/ServiceManagementAutomationX.psprojs
-ServiceManagementAutomationX/ServiceManagementAutomationX.psproj
+SMAX/SMAX.psproj
+SMAX/SMAX.psproj.bak
+SMAX/SMAX.psprojs
+SMAX/SMAX.psproj
 
 # ignore the TestResults
 TestResults/*
 
 # ignore the publishing Directory
 publish/*
-ServiceManagementAutomationX/en-us/*.json
+SMAX/en-us/*.json

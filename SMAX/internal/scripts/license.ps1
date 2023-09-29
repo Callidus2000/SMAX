@@ -1,4 +1,4 @@
-﻿New-PSFLicense -Product 'ServiceManagementAutomationX' -Manufacturer 'Sascha Spiekermann' -ProductVersion $script:ModuleVersion -ProductType Module -Name GPL -Version "3.0.0.0" -Date (Get-Date "2020-09-21") -Text @"
+﻿New-PSFLicense -Product 'SMAX' -Manufacturer 'Sascha Spiekermann' -ProductVersion $script:ModuleVersion -ProductType Module -Name GPL -Version "3.0.0.0" -Date (Get-Date "2020-09-21") -Text @"
 GNU GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007
 

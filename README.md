@@ -24,7 +24,7 @@
 <br />
 <p align="center">
 <!-- PROJECT LOGO
-  <a href="https://github.com/Callidus2000/ServiceManagementAutomationX">
+  <a href="https://github.com/Callidus2000/SMAX">
     <img src="images/logo.png" alt="Logo" width="80" height="80">
   </a>
 -->
@@ -34,12 +34,12 @@
   <p align="center">
     This Powershell Module is a wrapper for the API of the Service Management Automation X (SMAX) platform
     <br />
-    <a href="https://github.com/Callidus2000/ServiceManagementAutomationX"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/Callidus2000/SMAX"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/Callidus2000/ServiceManagementAutomationX/issues">Report Bug</a>
+    <a href="https://github.com/Callidus2000/SMAX/issues">Report Bug</a>
     ·
-    <a href="https://github.com/Callidus2000/ServiceManagementAutomationX/issues">Request Feature</a>
+    <a href="https://github.com/Callidus2000/SMAX/issues">Request Feature</a>
   </p>
 </p>
 
@@ -139,7 +139,7 @@ To get a local copy up and running follow these simple steps.
 
 The releases are published in the Powershell Gallery, therefor it is quite simple:
   ```powershell
-  Install-Module ServiceManagerAutomationX -Force -AllowClobber
+  Install-Module SMAX -Force -AllowClobber
   ```
 The `AllowClobber` option is currently necessary because of an issue in the current PowerShellGet module. Hopefully it will not be needed in the future any more.
 
@@ -257,7 +257,7 @@ New features will be added if any of my scripts need it ;-)
 
 I cannot guarantee that no breaking change will occur as the development follows my internal DevOps need completely. Likewise I will not insert full documentation of all parameters as I don't have time for this copy&paste. Sorry. But major changes which classify as breaking changes will result in an increment of the major version. See [Changelog](FortigateManager\changelog.md) for information regarding breaking changes.
 
-See the [open issues](https://github.com/Callidus2000/ServiceManagementAutomationX/issues) for a list of proposed features (and known issues).
+See the [open issues](https://github.com/Callidus2000/SMAX/issues) for a list of proposed features (and known issues).
 
 If you need a special function feel free to contribute to the project.
 
@@ -290,7 +290,7 @@ Distributed under the GNU GENERAL PUBLIC LICENSE version 3. See `LICENSE.md` for
 ## Contact
 
 
-Project Link: [https://github.com/Callidus2000/ServiceManagementAutomationX](https://github.com/Callidus2000/ServiceManagementAutomationX)
+Project Link: [https://github.com/Callidus2000/SMAX](https://github.com/Callidus2000/SMAX)
 
 
 
@@ -305,14 +305,14 @@ Project Link: [https://github.com/Callidus2000/ServiceManagementAutomationX](htt
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/Callidus2000/ServiceManagementAutomationX.svg?style=for-the-badge
-[contributors-url]: https://github.com/Callidus2000/ServiceManagementAutomationX/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/Callidus2000/ServiceManagementAutomationX.svg?style=for-the-badge
-[forks-url]: https://github.com/Callidus2000/ServiceManagementAutomationX/network/members
-[stars-shield]: https://img.shields.io/github/stars/Callidus2000/ServiceManagementAutomationX.svg?style=for-the-badge
-[stars-url]: https://github.com/Callidus2000/ServiceManagementAutomationX/stargazers
-[issues-shield]: https://img.shields.io/github/issues/Callidus2000/ServiceManagementAutomationX.svg?style=for-the-badge
-[issues-url]: https://github.com/Callidus2000/ServiceManagementAutomationX/issues
-[license-shield]: https://img.shields.io/github/license/Callidus2000/ServiceManagementAutomationX.svg?style=for-the-badge
-[license-url]: https://github.com/Callidus2000/ServiceManagementAutomationX/blob/master/LICENSE
+[contributors-shield]: https://img.shields.io/github/contributors/Callidus2000/SMAX.svg?style=for-the-badge
+[contributors-url]: https://github.com/Callidus2000/SMAX/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/Callidus2000/SMAX.svg?style=for-the-badge
+[forks-url]: https://github.com/Callidus2000/SMAX/network/members
+[stars-shield]: https://img.shields.io/github/stars/Callidus2000/SMAX.svg?style=for-the-badge
+[stars-url]: https://github.com/Callidus2000/SMAX/stargazers
+[issues-shield]: https://img.shields.io/github/issues/Callidus2000/SMAX.svg?style=for-the-badge
+[issues-url]: https://github.com/Callidus2000/SMAX/issues
+[license-shield]: https://img.shields.io/github/license/Callidus2000/SMAX.svg?style=for-the-badge
+[license-url]: https://github.com/Callidus2000/SMAX/blob/master/LICENSE
 

@@ -1,6 +1,6 @@
 ﻿@{
 	# Script module or binary module file associated with this manifest
-	RootModule = 'ServiceManagementAutomationX.psm1'
+	RootModule = 'SMAX.psm1'
 
 	# Version number of this module.
 	ModuleVersion = '0.1.0'
@@ -31,13 +31,13 @@
 	)
 
 	# Assemblies that must be loaded prior to importing this module
-	# RequiredAssemblies = @('bin\ServiceManagementAutomationX.dll')
+	# RequiredAssemblies = @('bin\SMAX.dll')
 
 	# Type files (.ps1xml) to be loaded when importing this module
-	# TypesToProcess = @('xml\ServiceManagementAutomationX.Types.ps1xml')
+	# TypesToProcess = @('xml\SMAX.Types.ps1xml')
 
 	# Format files (.ps1xml) to be loaded when importing this module
-	# FormatsToProcess = @('xml\ServiceManagementAutomationX.Format.ps1xml')
+	# FormatsToProcess = @('xml\SMAX.Format.ps1xml')
 
 	# Functions to export from this module
 	FunctionsToExport = @(

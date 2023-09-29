@@ -161,7 +161,7 @@
     if ($ExportDevJson) {
         $cfgFullNames=Get-PSFConfig | Where-Object fullname -like "$prefix*" | Select-Object -ExpandProperty FullName
         foreach($cfgName in $cfgFullNames){
-            $filename = Join-Path $moduleRoot "en-us" (($cfgName -replace "ServiceManagementAutomationX.") + '.json')
+            $filename = Join-Path $moduleRoot "en-us" (($cfgName -replace "SMAX.") + '.json')
             Write-PSFMessage -Level Host "Exporting PSFConfig $cfgName to $filename"
             Get-PSFConfigValue -FullName $cfgName|ConvertTo-Json -Depth 10 |Out-File -FilePath $filename -Force
         }
