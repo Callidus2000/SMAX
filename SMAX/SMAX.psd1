@@ -18,10 +18,10 @@
 	Copyright = 'Copyright (c) 2023 Sascha Spiekermann'
 
 	# Description of the functionality provided by this module
-	Description = 's'
+	Description = 'PowerShell Module for Service Management Automation X (SMAX)'
 
 	# Minimum version of the Windows PowerShell engine required by this module
-	PowerShellVersion = '5.0'
+	PowerShellVersion = '7.1'
 
 	# Modules that must be imported into the global environment prior to importing
 	# this module
@@ -93,13 +93,13 @@
 		PSData = @{
 
 			# Tags applied to this module. These help with module discovery in online galleries.
-			# Tags = @()
+			Tags = @('SMAX','ServiceManagementAutomationX')
 
-			# A URL to the license for this module.
-			# LicenseUri = ''
+			# A URL to thehttps://raw.githubusercontent.com/Callidus2000/SMAX/main/LICENSE license for this module.
+			LicenseUri = 'https://raw.githubusercontent.com/Callidus2000/SMAX/main/LICENSE'
 
 			# A URL to the main website for this project.
-			# ProjectUri = ''
+			ProjectUri = 'https://github.com/Callidus2000/SMAX/'
 
 			# A URL to an icon representing this module.
 			# IconUri = ''
