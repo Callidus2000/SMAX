@@ -1,0 +1,25 @@
+name: Release
+on: 
+  workflow_dispatch:
+    inputs:
+      ReleaseHeader:
+        description: The header to be added to the release.
+        required: false
+jobs:
+  manualRelease:
+
+    runs-on: windows-2019
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Install Prerequisites
+      run: .\build\vsts-prerequisites.ps1
+      shell: powershell
+    # - name: Validate
+    #   run: .\build\vsts-validate.ps1
+    #   shell: powershell
+    - name: Build
+      run: .\build\vsts-build.ps1 -ApiKey $env:APIKEY
+      shell: powershell
+      env:
+        APIKEY: ${{ secrets.ApiKey }}
