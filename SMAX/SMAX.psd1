@@ -21,7 +21,7 @@
 	Description = 'PowerShell Module for Service Management Automation X (SMAX)'
 
 	# Minimum version of the Windows PowerShell engine required by this module
-	PowerShellVersion = '7.1'
+	PowerShellVersion = '5.1'
 
 	# Modules that must be imported into the global environment prior to importing
 	# this module
