@@ -30,7 +30,7 @@
     Returns the current timestamp
 
     .EXAMPLE
-    $request=Get-SMAXEntity -EntityName Request -Properties CreateTime -Id 4711
+    $request=Get-SMAXEntity -EntityType Request -Properties CreateTime -Id 4711
     $request.CreateTime
     Tuesday, 10 January 2023 15:16:58
     Convert-SMAXTimeStamp -FromObject $request

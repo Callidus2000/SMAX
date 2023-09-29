@@ -13,7 +13,7 @@
     .PARAMETER EnableException
     Indicates whether exceptions should be enabled. By default, exceptions are enabled.
 
-    .PARAMETER EntityName
+    .PARAMETER EntityType
     Specifies the name of the entity to create. This parameter is optional when using
     the pipeline to provide input objects.
 
@@ -26,7 +26,7 @@
         Description = "This is a new incident",
         Category = "Service Request"
     }
-    PS C:\> Add-SMAXEntity -Connection $conn -EntityName "Incident" -InputObject $newEntity
+    PS C:\> Add-SMAXEntity -Connection $conn -EntityType "Incident" -InputObject $newEntity
 
     This example creates a new incident entity with the specified properties.
 
@@ -39,8 +39,8 @@
         $Connection = (Get-SMAXLastConnection),
         [bool]$EnableException = $true,
         [parameter(mandatory = $false, ValueFromPipeline = $false, ParameterSetName = "byEntityId")]
-        [PSFramework.TabExpansion.PsfArgumentCompleterAttribute("SMAX.EntityNames")]
-        [string]$EntityName,
+        [PSFramework.TabExpansion.PsfArgumentCompleterAttribute("SMAX.EntityTypes")]
+        [string]$EntityType,
         [parameter(mandatory = $true, ValueFromPipeline = $true, ParameterSetName = "byEntityId")]
         [object[]]$InputObject
     )

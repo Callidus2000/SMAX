@@ -22,7 +22,7 @@
     Specifies the ID of the user options for whom further information is retrieved.
 
 .EXAMPLE
-    $request=Get-SMAXEntity -EntityName Request -Properties UserOptionsName -Id 123
+    $request=Get-SMAXEntity -EntityType Request -Properties UserOptionsName -Id 123
     Get-SMAXUserOption -Id $request.UserOptionsName
 
     Description:

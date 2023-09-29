@@ -16,7 +16,7 @@
     .PARAMETER EnableException
         Indicates whether exceptions should be enabled. Default is $true.
 
-    .PARAMETER EntityName
+    .PARAMETER EntityType
         Specifies the name of the entity for which the association needs to be removed.
 
     .PARAMETER EntityId
@@ -36,7 +36,7 @@
 
     .EXAMPLE
         # Remove a single association between two entities.
-        Remove-SMAXAssociation -EntityName "Incident" -EntityId 123 -RemoteId 456 -Association "RelatedIncident"
+        Remove-SMAXAssociation -EntityType "Incident" -EntityId 123 -RemoteId 456 -Association "RelatedIncident"
 
         Description:
         Removes the "RelatedIncident" association between the Incident with EntityId 123
@@ -45,7 +45,7 @@
     .EXAMPLE
         # Build a bulk association removal operation.
         $bulkParams = @{
-            EntityName = "Change"
+            EntityType = "Change"
             EntityId   = 789
             RemoteId   = 987
             Association = "RelatedChange"
@@ -53,7 +53,7 @@
         }
         Remove-SMAXAssociation @bulkParams
         $bulkParams = @{
-            EntityName = "Change"
+            EntityType = "Change"
             EntityId   = 789
             RemoteId   = 123
             Association = "RelatedChange"
@@ -77,8 +77,8 @@
         [bool]$EnableException = $true,
         [parameter(mandatory = $true, ValueFromPipeline = $false, ParameterSetName = "singleAssociation")]
         [parameter(mandatory = $true, ValueFromPipeline = $false, ParameterSetName = "BuildBulk")]
-        [PSFramework.TabExpansion.PsfArgumentCompleterAttribute("SMAX.EntityNames")]
-        [string]$EntityName,
+        [PSFramework.TabExpansion.PsfArgumentCompleterAttribute("SMAX.EntityTypes")]
+        [string]$EntityType,
         [parameter(mandatory = $true, ValueFromPipeline = $false, ParameterSetName = "singleAssociation")]
         [parameter(mandatory = $true, ValueFromPipeline = $false, ParameterSetName = "BuildBulk")]
         [int]$EntityId,

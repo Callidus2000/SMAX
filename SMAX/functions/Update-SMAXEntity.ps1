@@ -13,18 +13,18 @@
     .PARAMETER EnableException
     Indicates whether exceptions should be enabled. By default, exceptions are enabled.
 
-    .PARAMETER EntityName
+    .PARAMETER EntityType
     Specifies the name of the entity to update. This parameter is optional if the
-    PSCustomObject has a PSTypeName 'SMAX.{entityname}'
+    PSCustomObject has a PSTypeName 'SMAX.{EntityType}'
 
     .PARAMETER InputObject
     Specifies the entities to update. You can provide an array of SMAX entity objects.
     They have to be from the same type
 
     .EXAMPLE
-    PS C:\> $entity = Get-SMAXEntity -Connection $conn -EntityName "Incident" -Id "123" -Properties *
+    PS C:\> $entity = Get-SMAXEntity -Connection $conn -EntityType "Incident" -Id "123" -Properties *
     PS C:\> $entity.Status = "Closed"
-    PS C:\> Update-SMAXEntity -Connection $conn -EntityName "Incident" -InputObject $entity
+    PS C:\> Update-SMAXEntity -Connection $conn -EntityType "Incident" -InputObject $entity
 
     This example retrieves an incident entity, updates its status to "Closed," and then
     applies the changes to the SMAX platform.
@@ -46,17 +46,17 @@
     .PARAMETER EnableException
     If set to $true, an exception will be thrown in case of an error
 
-    .PARAMETER EntityName
+    .PARAMETER EntityType
     The name of the entity (N).
-    Can be ommited if the PSCustomObject has a PSTypeName 'SMAX.{entityname}'
+    Can be ommited if the PSCustomObject has a PSTypeName 'SMAX.{EntityType}'
 
     .PARAMETER InputObject
     The new object to be created. Either a CustomObject or a HashTable with the new properties.
 
     .EXAMPLE
-    $request=Get-SMAXEntity -Connection $connection -EntityName Request -Id 47
+    $request=Get-SMAXEntity -Connection $connection -EntityType Request -Id 47
     # ... Setting the properties
-    $request|Update-SMAXEntity -Connection $connection -EntityName Request
+    $request|Update-SMAXEntity -Connection $connection -EntityType Request
 
 
     .NOTES
@@ -68,8 +68,8 @@
         $Connection = (Get-SMAXLastConnection),
         [bool]$EnableException = $true,
         [parameter(mandatory = $false, ValueFromPipeline = $false, ParameterSetName = "byEntityId")]
-        [PSFramework.TabExpansion.PsfArgumentCompleterAttribute("SMAX.EntityNames")]
-        [string]$EntityName,
+        [PSFramework.TabExpansion.PsfArgumentCompleterAttribute("SMAX.EntityTypes")]
+        [string]$EntityType,
         [parameter(mandatory = $true, ValueFromPipeline = $true, ParameterSetName = "byEntityId")]
         [object[]]$InputObject
     )

@@ -23,9 +23,9 @@
     .PARAMETER EnablePaging
         Enables paging for large result sets. By default, paging is enabled.
 
-    .PARAMETER EntityName
+    .PARAMETER EntityType
         Specifies the name of the entity to retrieve. This parameter supports tab
-        completion using SMAX.EntityNames.
+        completion using SMAX.EntityTypes.
 
     .PARAMETER Properties
         Specifies the properties to retrieve for the entity. This parameter supports
@@ -48,13 +48,13 @@
         If specified, the result is flattened, and only the properties are returned.
 
     .EXAMPLE
-        Get-SMAXEntity -EntityName "Incident" -Properties "*" -Filter "Status='New'"
+        Get-SMAXEntity -EntityType "Incident" -Properties "*" -Filter "Status='New'"
 
         Description:
         Retrieves all properties of new incidents.
 
     .EXAMPLE
-        Get-SMAXEntity -EntityName "User" -Properties "Name", "Email" -Order "Name"
+        Get-SMAXEntity -EntityType "User" -Properties "Name", "Email" -Order "Name"
 
         Description:
         Retrieves the name and email properties of users, sorted by name.
@@ -70,8 +70,8 @@
         [bool]$EnablePaging = $true,
         [parameter(mandatory = $true, ValueFromPipeline = $false, ParameterSetName = "byFilter")]
         [parameter(mandatory = $true, ValueFromPipeline = $false, ParameterSetName = "byEntityId")]
-        [PSFramework.TabExpansion.PsfArgumentCompleterAttribute("SMAX.EntityNames")]
-        [string]$EntityName,
+        [PSFramework.TabExpansion.PsfArgumentCompleterAttribute("SMAX.EntityTypes")]
+        [string]$EntityType,
         [parameter(mandatory = $false, ValueFromPipeline = $false, ParameterSetName = "byFilter")]
         [parameter(mandatory = $true, ValueFromPipeline = $false, ParameterSetName = "byEntityId")]
         [PSFramework.TabExpansion.PsfArgumentCompleterAttribute("SMAX.EntityProperties")]
@@ -95,9 +95,9 @@
         Connection             = $Connection
         ConvertJsonAsHashtable = $false
         LoggingAction          = "Get-SMAXEntity"
-        LoggingActionValues    = @($EntityName, $Properties,$Filter)
+        LoggingActionValues    = @($EntityType, $Properties,$Filter)
         method                 = "GET"
-        Path                   = "/ems/$EntityName"
+        Path                   = "/ems/$EntityType"
         URLParameter           = @{
             layout = $layout
         }

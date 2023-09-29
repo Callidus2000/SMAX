@@ -21,7 +21,7 @@
         Specifies the user options data to optimize.
 
     .EXAMPLE
-    $request=Get-SMAXEntity -EntityName Request -Properties UserOptions -Id 123
+    $request=Get-SMAXEntity -EntityType Request -Properties UserOptions -Id 123
     $optimizedData = Optimize-SMAXUserOptions -Useroptions $request.useroptions
 
         Description:

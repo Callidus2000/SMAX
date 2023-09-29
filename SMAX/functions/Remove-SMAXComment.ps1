@@ -15,7 +15,7 @@
     .PARAMETER EnableException
     Indicates whether exceptions should be enabled. Default is $true.
 
-    .PARAMETER EntityName
+    .PARAMETER EntityType
     Specifies the name of the entity for which the comment needs to be removed. Use this parameter in the
     "byEntity" parameter set.
 
@@ -36,14 +36,14 @@
         id = "123456"
         body = "This is a test comment."
     }
-    Remove-SMAXComment -EntityName "Incident" -Id "789" -Comment $commentObject
+    Remove-SMAXComment -EntityType "Incident" -Id "789" -Comment $commentObject
 
     Description:
     Removes the comment specified by the comment object associated with the Incident with ID 789.
 
     .EXAMPLE
     # Remove a comment associated with an entity using the entity's ID and comment's ID.
-    Remove-SMAXComment -EntityName "Change" -CommentId "987654" -Id "456"
+    Remove-SMAXComment -EntityType "Change" -CommentId "987654" -Id "456"
 
     Description:
     Removes the comment with ID 987654 associated with the Change with ID 456.
@@ -59,8 +59,8 @@
         [bool]$EnableException = $true,
         [parameter(mandatory = $true, ValueFromPipeline = $false, ParameterSetName = "byEntity")]
         [parameter(mandatory = $true, ValueFromPipeline = $false, ParameterSetName = "byEntityId")]
-        [PSFramework.TabExpansion.PsfArgumentCompleterAttribute("SMAX.EntityNames")]
-        [string]$EntityName,
+        [PSFramework.TabExpansion.PsfArgumentCompleterAttribute("SMAX.EntityTypes")]
+        [string]$EntityType,
         [parameter(mandatory = $true, ValueFromPipeline = $false, ParameterSetName = "byEntity")]
         [parameter(mandatory = $true, ValueFromPipeline = $false, ParameterSetName = "byEntityId")]
         [string]$Id,
@@ -81,9 +81,9 @@
         Connection             = $Connection
         ConvertJsonAsHashtable = $false
         LoggingAction          = "Remove-SMAXComment"
-        LoggingActionValues    = @( $CommentId, $Id, $EntityName)
+        LoggingActionValues    = @( $CommentId, $Id, $EntityType)
         method                 = "DELETE"
-        Path                   = "/collaboration/comments/$EntityName/$Id/$CommentId"
+        Path                   = "/collaboration/comments/$EntityType/$Id/$CommentId"
         # body                   = $Comment|ConvertTo-PSFHashtable
     }
     Write-PSFMessage "`$apiCallParameter=$($apiCallParameter|ConvertTo-Json -Depth 5)"

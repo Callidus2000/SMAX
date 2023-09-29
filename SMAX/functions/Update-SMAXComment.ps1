@@ -14,7 +14,7 @@
     .PARAMETER EnableException
     Indicates whether exceptions should be enabled. By default, exceptions are enabled.
 
-    .PARAMETER EntityName
+    .PARAMETER EntityType
     Specifies the name of the entity associated with the comment.
 
     .PARAMETER Id
@@ -24,9 +24,9 @@
     Specifies the comment to update. This should be a comment object obtained from SMAX.
 
     .EXAMPLE
-    PS C:\> $comment = Get-SMAXComment -Connection $conn -EntityName "Incident" -Id "123" -CommentId "456"
+    PS C:\> $comment = Get-SMAXComment -Connection $conn -EntityType "Incident" -Id "123" -CommentId "456"
     PS C:\> $comment.Body = "Updated comment body"
-    PS C:\> Update-SMAXComment -Connection $conn -EntityName "Incident" -Id "123" -Comment $comment
+    PS C:\> Update-SMAXComment -Connection $conn -EntityType "Incident" -Id "123" -Comment $comment
 
     This example retrieves a comment associated with an incident, updates its body, and then
     applies the changes to the SMAX platform.
@@ -41,8 +41,8 @@
         $Connection = (Get-SMAXLastConnection),
         [bool]$EnableException = $true,
         [parameter(mandatory = $true, ValueFromPipeline = $false, ParameterSetName = "byEntityId")]
-        [PSFramework.TabExpansion.PsfArgumentCompleterAttribute("SMAX.EntityNames")]
-        [string]$EntityName,
+        [PSFramework.TabExpansion.PsfArgumentCompleterAttribute("SMAX.EntityTypes")]
+        [string]$EntityType,
         [parameter(mandatory = $true, ValueFromPipeline = $false, ParameterSetName = "byEntityId")]
         [string]$Id,
         [parameter(mandatory = $true, ValueFromPipeline = $false, ParameterSetName = "byEntityId")]
@@ -57,9 +57,9 @@
         Connection             = $Connection
         ConvertJsonAsHashtable = $false
         LoggingAction          = "Update-SMAXComment"
-        LoggingActionValues    = @( $comment.ID, $Id, $EntityName)
+        LoggingActionValues    = @( $comment.ID, $Id, $EntityType)
         method                 = "PUT"
-        Path                   = "/collaboration/comments/$EntityName/$Id/$($Comment.Id)"
+        Path                   = "/collaboration/comments/$EntityType/$Id/$($Comment.Id)"
         body                   = $Comment|ConvertTo-PSFHashtable
     }
     Write-PSFMessage "`$apiCallParameter=$($apiCallParameter|ConvertTo-Json -Depth 5)"

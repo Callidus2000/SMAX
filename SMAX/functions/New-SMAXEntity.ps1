@@ -14,7 +14,7 @@
         will use the last saved connection obtained using the Get-SMAXLastConnection
         function.
 
-    .PARAMETER EntityName
+    .PARAMETER EntityType
         Specifies the name of the entity type for which the empty object is created.
 
     .PARAMETER Properties
@@ -25,13 +25,13 @@
         Definition, and DefinitionCopyToClipboard. Default is HashTable.
 
     .EXAMPLE
-        $emptyEntity = New-SMAXEntity -EntityName "Incident" -Properties "Title", "Description"
+        $emptyEntity = New-SMAXEntity -EntityType "Incident" -Properties "Title", "Description"
 
         Description:
         Creates an empty incident entity object with the specified properties.
 
     .EXAMPLE
-        $emptyEntityDef = New-SMAXEntity -EntityName "Change" -Properties "Title", "ScheduledStartDate" -ReturnMode "Definition"
+        $emptyEntityDef = New-SMAXEntity -EntityType "Change" -Properties "Title", "ScheduledStartDate" -ReturnMode "Definition"
 
         Description:
         Generates a definition of an empty change entity object with specific properties.
@@ -43,20 +43,20 @@
     param (
         [parameter(Mandatory = $false)]
         $Connection = (Get-SMAXLastConnection),
-        [PSFramework.TabExpansion.PsfArgumentCompleterAttribute("SMAX.EntityNames")]
-        [string]$EntityName,
+        [PSFramework.TabExpansion.PsfArgumentCompleterAttribute("SMAX.EntityTypes")]
+        [string]$EntityType,
         [PSFramework.TabExpansion.PsfArgumentCompleterAttribute("SMAX.EntityProperties")]
         [string[]]$Properties,
        	[ValidateSet('HashTable', 'Definition', 'DefinitionCopyToClipboard')]
         [string]$ReturnMode = "HashTable"
     )
-    Write-PSFMessage "Creating empty entity of type $EntityName with all required properties"
+    Write-PSFMessage "Creating empty entity of type $EntityType with all required properties"
     $definitions = Get-PSFConfigValue -FullName "$(Get-SMAXConfPrefix -Connection $Connection).entityDefinition"
-    if (-not $definitions.containskey($entityName)) {
-        Write-PSFMessage -Level Critical "Entitytype $EntityName not defined"
+    if (-not $definitions.containskey($EntityType)) {
+        Write-PSFMessage -Level Critical "Entitytype $EntityType not defined"
         return
     }
-    $allPossibleProperties = $definitions.$EntityName.properties
+    $allPossibleProperties = $definitions.$EntityType.properties
     $mandatoryProperties = $allPossibleProperties | Where-Object required -eq $true
     $optionalProperties = $allPossibleProperties | Where-Object required -eq $false
     $nonExistingProperties = $Properties | Where-Object { ($_ -notin $allPossibleProperties.name) }
@@ -65,7 +65,7 @@
         Write-PSFMessage -Level Warning "The following properties are mandatory and therefor already included: $($alreadyMandatoryProperties -join ',')"
     }
     if (-not [string]::IsNullOrEmpty($nonExistingProperties)) {
-        Write-PSFMessage -Level Warning "The following properties do not exist for Entities of type $($EntityName): $($nonExistingProperties -join ',')"
+        Write-PSFMessage -Level Warning "The following properties do not exist for Entities of type $($EntityType): $($nonExistingProperties -join ',')"
     }
     $propertiesToInclude = ($mandatoryProperties + ($optionalProperties | Where-Object name -in $Properties)) | Sort-Object -Property Name
     switch -Regex ($ReturnMode){
@@ -78,8 +78,8 @@
         'Definition'{
             $padLeft = ($propertiesToInclude.name | Measure-Object -Maximum -Property Length).Maximum
             $sb = [System.Text.StringBuilder]::new()
-            [void]$sb.AppendLine( "`$$EntityName=@{" )
-            [void]$sb.AppendFormat( "    # {0,$(-$padLeft+2)} = `"{1}`"   # Uncomment if converted to [PSCustomObject] later", @("PSTypeName", "SMAX.$EntityName") )
+            [void]$sb.AppendLine( "`$$EntityType=@{" )
+            [void]$sb.AppendFormat( "    # {0,$(-$padLeft+2)} = `"{1}`"   # Uncomment if converted to [PSCustomObject] later", @("PSTypeName", "SMAX.$EntityType") )
             [void]$sb.AppendLine(  )
             foreach ($prop in $propertiesToInclude) {
                 [void]$sb.AppendFormat( "    {0,-$padLeft} = `"`"   # {1}", @($prop.name,$prop.locname) )

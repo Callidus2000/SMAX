@@ -13,7 +13,7 @@
     .PARAMETER EnableException
     Indicates whether exceptions should be enabled. By default, exceptions are enabled.
 
-    .PARAMETER EntityName
+    .PARAMETER EntityType
     Specifies the name of the source entity from which the association is created.
 
     .PARAMETER EntityId
@@ -32,12 +32,12 @@
     Indicates whether to execute a bulk association operation.
 
     .EXAMPLE
-    PS C:\> Add-SMAXAssociation -Connection $conn -EntityName "Incident" -EntityId 123 -RemoteId 456 -Association "RelatesTo"
+    PS C:\> Add-SMAXAssociation -Connection $conn -EntityType "Incident" -EntityId 123 -RemoteId 456 -Association "RelatesTo"
 
     This example creates an association between an incident with ID 123 and another entity with ID 456 of type "RelatesTo."
     .EXAMPLE
-    Add-SMAXAssociation -EntityName Request -EntityId 400551 -Association FollowedByUsers -remoteId 388154 -BulkID MyBulk
-    Add-SMAXAssociation -EntityName Request -EntityId 400551 -Association FollowedByUsers -remoteId 115 -BulkID MyBulk
+    Add-SMAXAssociation -EntityType Request -EntityId 400551 -Association FollowedByUsers -remoteId 388154 -BulkID MyBulk
+    Add-SMAXAssociation -EntityType Request -EntityId 400551 -Association FollowedByUsers -remoteId 115 -BulkID MyBulk
     Add-SMAXAssociation -BulkID MyBulk -ExecuteBatch
 
     Adds the persons 388154 and 115 to the Request 400551 as a follower in a single web request.
@@ -53,8 +53,8 @@
         [bool]$EnableException = $true,
         [parameter(mandatory = $true, ValueFromPipeline = $false, ParameterSetName = "singleAssociation")]
         [parameter(mandatory = $true, ValueFromPipeline = $false, ParameterSetName = "BuildBulk")]
-        [PSFramework.TabExpansion.PsfArgumentCompleterAttribute("SMAX.EntityNames")]
-        [string]$EntityName,
+        [PSFramework.TabExpansion.PsfArgumentCompleterAttribute("SMAX.EntityTypes")]
+        [string]$EntityType,
         [parameter(mandatory = $true, ValueFromPipeline = $false, ParameterSetName = "singleAssociation")]
         [parameter(mandatory = $true, ValueFromPipeline = $false, ParameterSetName = "BuildBulk")]
         [int]$EntityId,

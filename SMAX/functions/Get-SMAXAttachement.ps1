@@ -19,7 +19,7 @@
     The destination path to the file
 
     .EXAMPLE
-    $request=Get-SMAXEntity -EntityName Request -Properties RequestAttachments -Id 483963
+    $request=Get-SMAXEntity -EntityType Request -Properties RequestAttachments -Id 483963
     $attachementData=($request.RequestAttachments|ConvertFrom-Json).complexTypeProperties.properties
     Get-SMAXAttachement -Connection $connection -Id $attachementData.id[0] -OutFile $attachementData.file_name[0]
 

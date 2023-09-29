@@ -1,4 +1,4 @@
-﻿Register-PSFTeppScriptblock -Name "SMAX.EntityNames" -ScriptBlock {
+﻿Register-PSFTeppScriptblock -Name "SMAX.EntityTypes" -ScriptBlock {
     try {
         if ([string]::IsNullOrEmpty($fakeBoundParameter.Connection)) {
             $connection = Get-SMAXLastConnection -EnableException $false

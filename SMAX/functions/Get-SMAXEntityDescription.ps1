@@ -20,19 +20,19 @@
     .PARAMETER EnablePaging
         Enables paging for large result sets. By default, paging is enabled.
 
-    .PARAMETER EntityName
+    .PARAMETER EntityType
         Specifies the name of the entity for which descriptions are retrieved. This
-        parameter supports tab completion using SMAX.EntityNames.
+        parameter supports tab completion using SMAX.EntityTypes.
 
     .EXAMPLE
-        Get-SMAXEntityDescription -EntityName "Incident"
+        Get-SMAXEntityDescription -EntityType "Incident"
 
         Description:
         Retrieves descriptions of the "Incident" entity, including its properties and
         associations.
 
     .EXAMPLE
-        Get-SMAXEntityDescription -EntityName "Change"
+        Get-SMAXEntityDescription -EntityType "Change"
 
         Description:
         Retrieves descriptions of the "Change" entity, including its properties and
@@ -48,8 +48,8 @@
         [bool]$EnableException = $true,
         [bool]$EnablePaging = $true,
         [parameter(mandatory = $true, ValueFromPipeline = $false, ParameterSetName = "default")]
-        [PSFramework.TabExpansion.PsfArgumentCompleterAttribute("SMAX.EntityNames")]
-        [string]$EntityName
+        [PSFramework.TabExpansion.PsfArgumentCompleterAttribute("SMAX.EntityTypes")]
+        [string]$EntityType
     )
     $sb=new System.Text.StringBuilder
     $definitions = Get-PSFConfigValue -FullName "$(Get-SMAXConfPrefix -Connection $Connection).entityDefinition"
@@ -65,11 +65,11 @@
             "possible values: $($property.possibleValues|ConvertTo-Json -Compress)"
         }
     }
-    [void]$sb.AppendFormat("Entity-Type {0}", $EntityName).AppendLine()
+    [void]$sb.AppendFormat("Entity-Type {0}", $EntityType).AppendLine()
     [void]$sb.AppendLine("Properties:")
-    [void]$sb.Append(($definitions.$EntityName.properties |Select-Object name, locname, logical_type, @{name = 'details'; expression = $detailsScript } |Sort-Object -Property locname| Format-Table -Wrap | Out-String))
+    [void]$sb.Append(($definitions.$EntityType.properties |Select-Object name, locname, logical_type, @{name = 'details'; expression = $detailsScript } |Sort-Object -Property locname| Format-Table -Wrap | Out-String))
     [void]$sb.AppendLine("Associations:")
-    [void]$sb.Append(($definitions.$EntityName.associations | Select-Object name, locname, cardinality, @{name = 'details'; expression = $detailsScript } | Sort-Object -Property locname | Format-Table -Wrap | Out-String))
+    [void]$sb.Append(($definitions.$EntityType.associations | Select-Object name, locname, cardinality, @{name = 'details'; expression = $detailsScript } | Sort-Object -Property locname | Format-Table -Wrap | Out-String))
 
     return $sb.ToString()
 

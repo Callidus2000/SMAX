@@ -10,14 +10,14 @@
     .PARAMETER Connection
     Specifies the SMAX connection to use. If not provided, it uses the last established connection.
 
-    .PARAMETER EntityName
+    .PARAMETER EntityType
     Specifies the name of the entity for which metadata descriptions are retrieved.
 
     .PARAMETER EnableException
     Indicates whether exceptions should be enabled. By default, exceptions are enabled.
 
     .EXAMPLE
-    PS C:\> Get-SMAXMetaEntityDescription -Connection $conn -EntityName "Incident"
+    PS C:\> Get-SMAXMetaEntityDescription -Connection $conn -EntityType "Incident"
 
     This example retrieves metadata descriptions for the "Incident" entity in the SMAX platform.
 
@@ -28,8 +28,8 @@
     param (
         [parameter(Mandatory = $false)]
         $Connection = (Get-SMAXLastConnection),
-        [PSFramework.TabExpansion.PsfArgumentCompleterAttribute("SMAX.EntityNames")]
-        [string]$EntityName,
+        [PSFramework.TabExpansion.PsfArgumentCompleterAttribute("SMAX.EntityTypes")]
+        [string]$EntityType,
         [bool]$EnableException = $true
     )
         $apiCallParameter = @{

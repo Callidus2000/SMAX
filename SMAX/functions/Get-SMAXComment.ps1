@@ -12,7 +12,7 @@
     .PARAMETER EnableException
     If set to $true, an exception will be thrown in case of an error
 
-    .PARAMETER EntityName
+    .PARAMETER EntityType
     The name of the entity
 
     .PARAMETER Id
@@ -22,7 +22,7 @@
     Filter the comments based on the privavy types 'Public', 'Internal'
 
     .EXAMPLE
-    Get-SMAXComment -Connection $connection -EntityName Request -Id 374344
+    Get-SMAXComment -Connection $connection -EntityType Request -Id 374344
 
     Retrieves all comments of Request 374344
 
@@ -35,8 +35,8 @@
         $Connection = (Get-SMAXLastConnection),
         [bool]$EnableException = $true,
         [parameter(mandatory = $true, ValueFromPipeline = $false, ParameterSetName = "byEntityId")]
-        [PSFramework.TabExpansion.PsfArgumentCompleterAttribute("SMAX.EntityNames")]
-        [string]$EntityName,
+        [PSFramework.TabExpansion.PsfArgumentCompleterAttribute("SMAX.EntityTypes")]
+        [string]$EntityType,
         [parameter(mandatory = $true, ValueFromPipeline = $false, ParameterSetName = "byEntityId")]
         [int]$Id,
         [ValidateSet('Public', 'Internal')]
@@ -49,9 +49,9 @@
         Connection             = $Connection
         ConvertJsonAsHashtable = $false
         LoggingAction          = "Get-SMAXComment"
-        LoggingActionValues    = @($EntityName, $Id)
+        LoggingActionValues    = @($EntityType, $Id)
         method                 = "GET"
-        Path                   = "/collaboration/comments/$EntityName/$Id"
+        Path                   = "/collaboration/comments/$EntityType/$Id"
         URLParameter           = @{}
     }
     if($PrivacyType){

@@ -13,12 +13,12 @@
     .PARAMETER EnableException
     Indicates whether exceptions should be enabled. By default, exceptions are enabled.
 
-    .PARAMETER EntityName
+    .PARAMETER EntityType
     Specifies the name of the entity for which the bulk operation is performed.
 
     .PARAMETER InputObject
     Specifies the entities to be created or updated. You can provide an array of SMAX entity objects.
-    They all have to be from the EntityName type
+    They all have to be from the EntityType
 
     .PARAMETER Operation
     Specifies the operation type. It can be either "Create" or "Update."
@@ -36,7 +36,7 @@
             Category = "Incident"
         }
     )
-    PS C:\> Invoke-SMAXBulk -Connection $conn -EntityName "Incident" -InputObject $newEntities -Operation "Create"
+    PS C:\> Invoke-SMAXBulk -Connection $conn -EntityType "Incident" -InputObject $newEntities -Operation "Create"
 
     This example performs a bulk creation operation for two new incidents.
 
@@ -51,7 +51,7 @@
             Title = "Updated Incident 2"
         }
     )
-    PS C:\> Invoke-SMAXBulk -Connection $conn -EntityName "Incident" -InputObject $updatedEntities -Operation "Update"
+    PS C:\> Invoke-SMAXBulk -Connection $conn -EntityType "Incident" -InputObject $updatedEntities -Operation "Update"
 
     This example performs a bulk update operation for two existing incidents.
 
@@ -65,8 +65,8 @@
         $Connection = (Get-SMAXLastConnection),
         [bool]$EnableException = $true,
         [parameter(mandatory = $false, ValueFromPipeline = $false, ParameterSetName = "byEntityId")]
-        [PSFramework.TabExpansion.PsfArgumentCompleterAttribute("SMAX.EntityNames")]
-        [string]$EntityName,
+        [PSFramework.TabExpansion.PsfArgumentCompleterAttribute("SMAX.EntityTypes")]
+        [string]$EntityType,
         [parameter(mandatory = $true, ValueFromPipeline = $true, ParameterSetName = "byEntityId")]
         [object[]]$InputObject,
        	[ValidateSet('Create', 'Update')]
@@ -86,11 +86,11 @@
             Write-PSFMessage "processing `$Obj: $($obj|ConvertTo-Json -Compress -Depth 4)"
             $localEntityName = $obj.psobject.TypeNames -match '^SMAX' -replace 'SMAX\.' | Select-Object -First 1
             if ([string]::IsNullOrEmpty($localEntityName)) {
-                if ([string]::IsNullOrEmpty($EntityName)) {
-                    Stop-PSFFunction -EnableException $EnableException -Message "Neither `$_.PSDataType nor -EntityName param set for object $($obj|ConvertTo-Json -Compress -Depth 4)"
+                if ([string]::IsNullOrEmpty($EntityType)) {
+                    Stop-PSFFunction -EnableException $EnableException -Message "Neither `$_.PSDataType nor -EntityType param set for object $($obj|ConvertTo-Json -Compress -Depth 4)"
                     continue
                 }
-                $localEntityName = $EntityName
+                $localEntityName = $EntityType
             }
             $validProperties = $definitions.$localEntityName.properties | Where-Object readonly -eq $false | Select-Object -ExpandProperty name
             if ($Operation -eq 'Update') { $validProperties += 'Id' }

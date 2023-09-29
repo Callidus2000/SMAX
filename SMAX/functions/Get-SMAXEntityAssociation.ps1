@@ -21,9 +21,9 @@
     .PARAMETER EnablePaging
         Enables paging for large result sets. By default, paging is enabled.
 
-    .PARAMETER EntityName
+    .PARAMETER EntityType
         Specifies the name of the entity for which associations are retrieved. This
-        parameter supports tab completion using SMAX.EntityNames.
+        parameter supports tab completion using SMAX.EntityTypes.
 
     .PARAMETER Properties
         Specifies the properties to retrieve for the entity associations. This
@@ -37,13 +37,13 @@
         Specifies the ID of the entity for which associations are retrieved.
 
     .EXAMPLE
-        Get-SMAXEntityAssociation -EntityName "Incident" -Association "linked_ci" -Id 123
+        Get-SMAXEntityAssociation -EntityType "Incident" -Association "linked_ci" -Id 123
 
         Description:
         Retrieves associations of the "linked_ci" type for the incident with ID 123.
 
     .EXAMPLE
-        Get-SMAXEntityAssociation -EntityName "Change" -Association "related_changes" -Id 456
+        Get-SMAXEntityAssociation -EntityType "Change" -Association "related_changes" -Id 456
         -Properties "Title", "Status"
 
         Description:
@@ -61,8 +61,8 @@
         [bool]$EnableException = $true,
         [bool]$EnablePaging = $true,
         [parameter(mandatory = $true, ValueFromPipeline = $false, ParameterSetName = "byEntityId")]
-        [PSFramework.TabExpansion.PsfArgumentCompleterAttribute("SMAX.EntityNames")]
-        [string]$EntityName,
+        [PSFramework.TabExpansion.PsfArgumentCompleterAttribute("SMAX.EntityTypes")]
+        [string]$EntityType,
         [parameter(mandatory = $true, ValueFromPipeline = $false, ParameterSetName = "byEntityId")]
         [PSFramework.TabExpansion.PsfArgumentCompleterAttribute("SMAX.EntityAssociationProperties")]
         [string[]]$Properties,
@@ -78,9 +78,9 @@
         Connection             = $Connection
         ConvertJsonAsHashtable = $false
         LoggingAction          = "Get-SMAXEntity"
-        LoggingActionValues    = @($EntityName, $Properties,$Filter)
+        LoggingActionValues    = @($EntityType, $Properties,$Filter)
         method                 = "GET"
-        Path                   = "/ems/$EntityName/$id/associations/$Association"
+        Path                   = "/ems/$EntityType/$id/associations/$Association"
         URLParameter           = @{
             layout = $Properties | Join-String -Separator ','
         }

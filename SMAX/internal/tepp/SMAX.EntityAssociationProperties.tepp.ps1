@@ -5,14 +5,14 @@
         }else{
             $connection = $fakeBoundParameter.Connection
         }
-        $entityName = $fakeBoundParameter.EntityName
+        $EntityType = $fakeBoundParameter.EntityType
         $associationName = $fakeBoundParameter.Association
-        if ([string]::IsNullOrEmpty($entityName)) { return }
+        if ([string]::IsNullOrEmpty($EntityType)) { return }
         if ([string]::IsNullOrEmpty($associationName)) { return }
 
         $definitions = Get-PSFConfigValue -FullName "$(Get-SMAXConfPrefix -Connection $Connection).tepp.EntityAssociationProperties"
-        if (-not $definitions.containskey("$entityName.$associationName")) { return }
-        return $definitions."$entityName.$associationName"
+        if (-not $definitions.containskey("$EntityType.$associationName")) { return }
+        return $definitions."$EntityType.$associationName"
     }
     catch {
         return "Error"

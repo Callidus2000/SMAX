@@ -13,7 +13,7 @@
     .PARAMETER EnableException
     Indicates whether exceptions should be enabled. By default, exceptions are enabled.
 
-    .PARAMETER EntityName
+    .PARAMETER EntityType
     Specifies the name of the entity to which comments will be added.
 
     .PARAMETER Id
@@ -24,7 +24,7 @@
 
     .EXAMPLE
     $comment=New-SMAXComment -ActualInterface API -Body "This is my comment" -CommentFrom Agent -CommentTo User -FunctionalPurpose Diagnosis -Media UI
-    Add-SMAXComment -Connection $connection -Comment $comment -EntityName Request -Id 4711
+    Add-SMAXComment -Connection $connection -Comment $comment -EntityType Request -Id 4711
 
     Creates a comment and adds it to the Request 4711
 
@@ -37,8 +37,8 @@
         $Connection = (Get-SMAXLastConnection),
         [bool]$EnableException = $true,
         [parameter(mandatory = $true, ValueFromPipeline = $false, ParameterSetName = "byEntityId")]
-        [PSFramework.TabExpansion.PsfArgumentCompleterAttribute("SMAX.EntityNames")]
-        [string]$EntityName,
+        [PSFramework.TabExpansion.PsfArgumentCompleterAttribute("SMAX.EntityTypes")]
+        [string]$EntityType,
         [parameter(mandatory = $true, ValueFromPipeline = $false, ParameterSetName = "byEntityId")]
         [string]$Id,
         [parameter(mandatory = $true, ValueFromPipeline = $true, ParameterSetName = "byEntityId")]
@@ -56,9 +56,9 @@
             Connection             = $Connection
             ConvertJsonAsHashtable = $false
             LoggingAction          = "Add-SMAXComment"
-            LoggingActionValues    = @( $commentList.Count, $Id, $EntityName)
+            LoggingActionValues    = @( $commentList.Count, $Id, $EntityType)
             method                 = "POST"
-            Path                   = "/collaboration/comments/bulk/$EntityName/$Id"
+            Path                   = "/collaboration/comments/bulk/$EntityType/$Id"
             body                   = ,$commentList|ConvertTo-Json -Depth 5
         }
         Write-PSFMessage "`$apiCallParameter=$($apiCallParameter|ConvertTo-Json -Depth 5)"

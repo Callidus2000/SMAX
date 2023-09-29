@@ -13,7 +13,7 @@
     .PARAMETER EnableException
     Indicates whether exceptions should be enabled. By default, exceptions are enabled.
 
-    .PARAMETER EntityName
+    .PARAMETER EntityType
     Specifies the name of the source entity from which the association is created.
 
     .PARAMETER EntityId
@@ -35,13 +35,13 @@
     Indicates whether to execute a bulk association operation.
 
     .EXAMPLE
-    Edit-SMAXAssociation -EntityName Request -EntityId 400551 -Association FollowedByUsers -remoteId 388154 -Operation Create
+    Edit-SMAXAssociation -EntityType Request -EntityId 400551 -Association FollowedByUsers -remoteId 388154 -Operation Create
 
     Adds the person 388154 to the Request 400551 as a follower.
 
     .EXAMPLE
-    Edit-SMAXAssociation -EntityName Request -EntityId 400551 -Association FollowedByUsers -remoteId 388154 -BulkID MyBulk
-    Edit-SMAXAssociation -EntityName Request -EntityId 400551 -Association FollowedByUsers -remoteId 115 -BulkID MyBulk
+    Edit-SMAXAssociation -EntityType Request -EntityId 400551 -Association FollowedByUsers -remoteId 388154 -BulkID MyBulk
+    Edit-SMAXAssociation -EntityType Request -EntityId 400551 -Association FollowedByUsers -remoteId 115 -BulkID MyBulk
     Edit-SMAXAssociation -BulkID MyBulk -Operation Create -ExecuteBatch
 
     Adds the persons 388154 and 115 to the Request 400551 as a follower in a single web request.
@@ -56,8 +56,8 @@
         [bool]$EnableException = $true,
         [parameter(mandatory = $true, ValueFromPipeline = $false, ParameterSetName = "singleAssociation")]
         [parameter(mandatory = $true, ValueFromPipeline = $false, ParameterSetName = "BuildBulk")]
-        [PSFramework.TabExpansion.PsfArgumentCompleterAttribute("SMAX.EntityNames")]
-        [string]$EntityName,
+        [PSFramework.TabExpansion.PsfArgumentCompleterAttribute("SMAX.EntityTypes")]
+        [string]$EntityType,
         [parameter(mandatory = $true, ValueFromPipeline = $false, ParameterSetName = "singleAssociation")]
         [parameter(mandatory = $true, ValueFromPipeline = $false, ParameterSetName = "BuildBulk")]
         [int]$EntityId,
@@ -84,14 +84,14 @@
         if ([string]::IsNullOrEmpty($definitions)) {
             Stop-PSFFunction -EnableException $EnableException -Message "SMAX Entitymodel not initialized, please run Initialize-SMAXEntityModel"
         }
-        $secondEndpoint = $definitions.$EntityName.associations | Where-Object name -eq $Association | Select-Object -ExpandProperty linkEntityName
+        $secondEndpoint = $definitions.$EntityType.associations | Where-Object name -eq $Association | Select-Object -ExpandProperty linkEntityName
         if ([string]::IsNullOrEmpty($secondEndpoint)) {
-            Stop-PSFFunction -EnableException $EnableException -Message "Could not find secondEndpoint for '$EntityName' association '$Association'"
+            Stop-PSFFunction -EnableException $EnableException -Message "Could not find secondEndpoint for '$EntityType' association '$Association'"
         }
         $newRel = [PSCustomObject]@{
             name           = $Association
             firstEndpoint  = [PSCustomObject]@{
-                $EntityName = $EntityId
+                $EntityType = $EntityId
             }
             secondEndpoint = [PSCustomObject]@{
                 $secondEndpoint = $RemoteId

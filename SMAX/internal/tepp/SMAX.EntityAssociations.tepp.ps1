@@ -6,21 +6,21 @@
         else {
             $connection = $fakeBoundParameter.Connection
         }
-        $entityName = $fakeBoundParameter.EntityName
-        if ([string]::IsNullOrEmpty($entityName)) { return }
+        $EntityType = $fakeBoundParameter.EntityType
+        if ([string]::IsNullOrEmpty($EntityType)) { return }
 
         $definitions = Get-PSFConfigValue -FullName "$(Get-SMAXConfPrefix -Connection $Connection).tepp.EntityAssociations"
-        if (-not $definitions.containskey($entityName)) { return }
-        # Write-PSFMessage "$entityName>$wordToComplete"
+        if (-not $definitions.containskey($EntityType)) { return }
+        # Write-PSFMessage "$EntityType>$wordToComplete"
         if ($wordToComplete -match "([^.]+)\..*") {
             $subPropName = $wordToComplete -replace "([^.]+)\..*", '$1'
-            if ($definitions.containskey("$entityName.$subPropName")) {
-                # Write-PSFMessage "$entityName>>$subPropName"
-                # Write-PSFMessage "`$definitions.`"$entityName.$subPropName`""
-                return $definitions."$entityName.$subPropName" #.properties | Select-Object @{name = "Text"; expression = { $_.name } }, @{name = "ToolTip"; expression = { $_.locName}}
+            if ($definitions.containskey("$EntityType.$subPropName")) {
+                # Write-PSFMessage "$EntityType>>$subPropName"
+                # Write-PSFMessage "`$definitions.`"$EntityType.$subPropName`""
+                return $definitions."$EntityType.$subPropName" #.properties | Select-Object @{name = "Text"; expression = { $_.name } }, @{name = "ToolTip"; expression = { $_.locName}}
             }
         }
-        return $definitions.$entityName #.properties | Select-Object @{name = "Text"; expression = { $_.name } }, @{name = "ToolTip"; expression = { $_.locName}}
+        return $definitions.$EntityType #.properties | Select-Object @{name = "Text"; expression = { $_.name } }, @{name = "ToolTip"; expression = { $_.locName}}
     }
     catch {
         return "Error $_"
