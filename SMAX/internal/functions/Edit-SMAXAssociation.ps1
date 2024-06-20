@@ -78,6 +78,8 @@
         [parameter(mandatory = $true, ValueFromPipeline = $false, ParameterSetName = "executeBulk")]
         [switch]$ExecuteBulk
     )
+    $BulkCacheHash=Get-PSFTaskEngineCache -Module SMAX -Name "Cache.AssociationBulk"
+    if ($null -eq $BulkCacheHash) { $BulkCacheHash=@{}}
     if (-not $ExecuteBulk){
         Write-PSFMessage "No Bulk Execution, creating new relationship object"
         $definitions = Get-PSFConfigValue -FullName "$(Get-SMAXConfPrefix -Connection $Connection).entityDefinition"
@@ -105,22 +107,24 @@
             # $relationships = new System.Collections.ArrayList
         }
         'Bulk'{
-            if([string]::IsNullOrEmpty($Script:EntAssBulks)){
-                Write-PSFMessage "Initialisiere `$Script:EntAssBulks"
-                $Script:EntAssBulks=@{}
-            }
-            if ($Script:EntAssBulks.containskey($BulkID)){
+            # if([string]::IsNullOrEmpty($BulkCacheHash)){
+            #     Write-PSFMessage "Initialisiere `$BulkCacheHash"
+            #     $BulkCacheHash=@{}
+            #     Set-PSFTaskEngineCache
+            # }
+            if ($BulkCacheHash.containskey($BulkID)){
                 Write-PSFMessage "Using existing Bulk Collection $BulkID"
-                $relationships=$Script:EntAssBulks.$BulkID
+                $relationships=$BulkCacheHash.$BulkID
             }
             else{
                 Write-PSFMessage "Starting Bulk Collection $BulkID"
                 $relationships = new System.Collections.ArrayList
-                $Script:EntAssBulks.$BulkID = $relationships
+                $BulkCacheHash.$BulkID = $relationships
             }
         }
         'BuildBulk'{
             [void]$relationships.add($newRel)
+            Set-PSFTaskEngineCache -Module SMAX -Name "Cache.AssociationBulk" -Value $BulkCacheHash
             return
         }
         'executeBulk'{
@@ -151,7 +155,9 @@
 
     if($ExecuteBulk){
         Write-PSFMessage "Bulk executed, clearing temp. cache"
-        $Script:EntAssBulks.remove($BulkID)
+        $BulkCacheHash.remove($BulkID)
     }
+    Set-PSFTaskEngineCache -Module SMAX -Name "Cache.AssociationBulk" -Value $BulkCacheHash
+
     return $result
 }

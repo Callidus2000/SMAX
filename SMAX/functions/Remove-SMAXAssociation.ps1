@@ -96,6 +96,8 @@
         [switch]$ExecuteBulk
     )
     $bulkParameter = $PSBoundParameters | ConvertTo-PSFHashtable
-    $bulkParameter.Operation = 'Delete'
+    if ($PsCmdlet.ParameterSetName -ne 'BuildBulk') {
+        $bulkParameter.Operation = 'Delete'
+    }
     Edit-SMAXAssociation @bulkParameter
 }
