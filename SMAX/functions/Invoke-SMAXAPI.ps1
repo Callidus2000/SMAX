@@ -111,11 +111,11 @@
         }
     }
     if ($connection.GetType().Name -ne 'ARAHConnection') {
-        Write-PSFMessage -Level Host "Wandle Connection aus OldConnection um"
+        Write-PSFMessage -Level Verbose "Wandle Connection aus OldConnection um"
         $Connection = Connect-SMAX -OldConnection $Connection
     }
     else {
-        Write-PSFMessage -Level Host "Wandle Connection aus OldConnection NICHT um"
+        Write-PSFMessage -Level Verbose "Wandle Connection aus OldConnection NICHT um"
     }
     $apiCallParameter = $PSBoundParameters | ConvertTo-PSFHashtable -Exclude LoggingActionValues, RevisionNote, LoggingAction
     if ($EnablePaging) {
