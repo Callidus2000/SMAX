@@ -3,7 +3,7 @@
 	RootModule = 'SMAX.psm1'
 
 	# Version number of this module.
-	ModuleVersion = '0.1.0'
+	ModuleVersion = '0.1.1'
 
 	# ID used to uniquely identify this module
 	GUID = '720c57b9-2d8f-4d49-a32a-9b634257c4f8'
