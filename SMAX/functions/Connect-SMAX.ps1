@@ -131,7 +131,7 @@
 		Uri         = "$($connection.ServerRoot)/auth/authentication-endpoint/authenticate/token"
 		ContentType = $connection.ContentType
 		Method      = "Post"
-		Body        = (@{login = $Credential.UserName ; password = $Credential.GetNetworkCredential().Password } | ConvertTo-Json)
+		Body        = (@{login = $Credential.UserName ; password = $Credential.GetNetworkCredential().Password } | ConvertTo-Json -WarningAction SilentlyContinue)
 	}
 	$token = Invoke-RestMethod @restParam
 

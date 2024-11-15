@@ -71,7 +71,7 @@
             "remoteType: $($property.linkEntityName)"
         }
         elseif ($property.logical_type -eq 'ENUM') {
-            "possible values: $($property.possibleValues|ConvertTo-Json -Compress)"
+            "possible values: $($property.possibleValues|ConvertTo-Json -WarningAction SilentlyContinue -Compress)"
         }
     }
     $propertyData = $definitions.$EntityType.properties | Select-Object name, locname, logical_type, @{name = 'details'; expression = $detailsScript } | Sort-Object -Property locname

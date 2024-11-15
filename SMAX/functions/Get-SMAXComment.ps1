@@ -57,7 +57,7 @@
     if($PrivacyType){
         $apiCallParameter.URLParameter.PrivacyType=$PrivacyType.ToUpper()
     }
-    Write-PSFMessage "`$apiCallParameter=$($apiCallParameter|ConvertTo-Json)"
+    Write-PSFMessage "`$apiCallParameter=$($apiCallParameter|ConvertTo-Json -WarningAction SilentlyContinue)"
     $result = Invoke-SMAXAPI @apiCallParameter
 
     return $result

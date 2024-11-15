@@ -3,7 +3,7 @@
 	RootModule = 'SMAX.psm1'
 
 	# Version number of this module.
-	ModuleVersion = '0.1.1'
+	ModuleVersion = '1.0.0'
 
 	# ID used to uniquely identify this module
 	GUID = '720c57b9-2d8f-4d49-a32a-9b634257c4f8'
@@ -27,7 +27,7 @@
 	# this module
 	RequiredModules = @(
 		@{ ModuleName='PSFramework'; ModuleVersion='1.9.310' }
-		@{ ModuleName='ARAH'; ModuleVersion='1.3.8' }
+		@{ ModuleName='ARAH'; ModuleVersion='1.4.0' }
 	)
 
 	# Assemblies that must be loaded prior to importing this module

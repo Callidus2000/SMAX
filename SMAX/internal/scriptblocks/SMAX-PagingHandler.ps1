@@ -36,12 +36,12 @@
                     LoggingActionValues = @($allItems.count,$totalCount)
                     # NO EnablePaging in the next Call
                 }
-                write-psfmessage "InvokeAPI with Params= $($nextParameter|convertto-json -depth 10)" -Level Debug -ModuleName ServiceManagementX -FunctionName 'SMAX.PagingHandler'
+                write-psfmessage "InvokeAPI with Params= $($nextParameter|ConvertTo-Json -WarningAction SilentlyContinue -depth 10)" -Level Debug -ModuleName ServiceManagementX -FunctionName 'SMAX.PagingHandler'
                 $result = Invoke-SMAXAPI @nextParameter
                 $allItems += ($result.entities)
             }
             if ($result.meta.completion_status -ne 'OK') {
-                Write-PSFMessage -Level Warning "completion_status NOT OK, $($result.meta |ConvertTo-Json -Compress)"
+                Write-PSFMessage -Level Warning "completion_status NOT OK, $($result.meta |ConvertTo-Json -WarningAction SilentlyContinue -Compress)"
             }
             return $allItems
         }

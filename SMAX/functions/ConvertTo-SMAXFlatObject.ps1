@@ -24,7 +24,7 @@
            }
            secondHalf="Life"
        }
-    }| ConvertTo-SMAXFlatObject | ConvertTo-Json
+    }| ConvertTo-SMAXFlatObject | ConvertTo-Json -WarningAction SilentlyContinue
 
     Returns
     {
@@ -51,8 +51,8 @@
 
     process {
         $result = @{}
-        Write-PSFMessage "Prefix=$Prefix, InputObject=$($InputObject|ConvertTo-Json -Compress), result=$($result|ConvertTo-Json -Compress)"
-        $hash = $InputObject | ConvertTo-Json -Depth 20|ConvertFrom-Json -AsHashtable
+        Write-PSFMessage "Prefix=$Prefix, InputObject=$($InputObject|ConvertTo-Json -WarningAction SilentlyContinue -Compress), result=$($result|ConvertTo-Json -WarningAction SilentlyContinue -Compress)"
+        $hash = $InputObject | ConvertTo-Json -WarningAction SilentlyContinue -Depth 20|ConvertFrom-Json -AsHashtable
         foreach ($key in $hash.Keys) {
             if([string]::IsNullOrEmpty($Prefix)){
                 $newKey = $key
@@ -62,7 +62,7 @@
             if ($hash.$key -is [hashtable]) {
                 Write-PSFMessage "Sub-Table für Key $key"
                 $subHash = ConvertTo-SMAXFlatObject -Prefix $newKey -Input $hash.$key -ReturnMode HashTable
-                Write-PSFMessage "subHash= $($subHash|ConvertTo-Json -Compress)"
+                Write-PSFMessage "subHash= $($subHash|ConvertTo-Json -WarningAction SilentlyContinue -Compress)"
                 $result+= $subHash
             }
             else {

@@ -115,7 +115,7 @@
             }
         }
     }
-    Write-PSFMessage "`$apiCallParameter=$($apiCallParameter|ConvertTo-Json)"
+    Write-PSFMessage "`$apiCallParameter=$($apiCallParameter|ConvertTo-Json -WarningAction SilentlyContinue)"
     $result = Invoke-SMAXAPI @apiCallParameter | Where-Object { $_.properties}
     foreach ($item in $result) {
         Add-Member -InputObject $item.properties -MemberType NoteProperty -Name related -Value $item.related_properties

@@ -19,7 +19,7 @@
 
     .PARAMETER Body
         Specifies the request body for the API operation.
-        Hashtables are Converted to the POST body by using ConvertTo-Json
+        Hashtables are Converted to the POST body by using ConvertTo-Json -WarningAction SilentlyContinue
 
     .PARAMETER Header
         Specifies custom HTTP headers for the API request.

@@ -75,6 +75,6 @@
     if ($PsCmdlet.ParameterSetName -ne 'BuildBulk') {
         $bulkParameter.Operation = 'Create'
     }
-    # Write-PSFMessage "`$bulkParameter=$($bulkParameter|ConvertTo-PSFHashtable -Exclude Connection|ConvertTo-Json -Compress)" -Level Critical
+    # Write-PSFMessage "`$bulkParameter=$($bulkParameter|ConvertTo-PSFHashtable -Exclude Connection|ConvertTo-Json -WarningAction SilentlyContinue -Compress)" -Level Critical
     Edit-SMAXAssociation @bulkParameter
 }

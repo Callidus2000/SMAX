@@ -81,13 +81,13 @@
         Write-PSFMessage "Load Definition $(Get-SMAXConfPrefix -Connection $Connection).entityDefinition"
     }
     process {
-        Write-PSFMessage "processing `$InputObject: $($InputObject|ConvertTo-Json -Compress -Depth 4)"
+        Write-PSFMessage "processing `$InputObject: $($InputObject|ConvertTo-Json -WarningAction SilentlyContinue -Compress -Depth 4)"
         foreach ($obj in $InputObject) {
-            Write-PSFMessage "processing `$Obj: $($obj|ConvertTo-Json -Compress -Depth 4)"
+            Write-PSFMessage "processing `$Obj: $($obj|ConvertTo-Json -WarningAction SilentlyContinue -Compress -Depth 4)"
             $localEntityName = $obj.psobject.TypeNames -match '^SMAX' -replace 'SMAX\.' | Select-Object -First 1
             if ([string]::IsNullOrEmpty($localEntityName)) {
                 if ([string]::IsNullOrEmpty($EntityType)) {
-                    Stop-PSFFunction -EnableException $EnableException -Message "Neither `$_.PSDataType nor -EntityType param set for object $($obj|ConvertTo-Json -Compress -Depth 4)"
+                    Stop-PSFFunction -EnableException $EnableException -Message "Neither `$_.PSDataType nor -EntityType param set for object $($obj|ConvertTo-Json -WarningAction SilentlyContinue -Compress -Depth 4)"
                     continue
                 }
                 $localEntityName = $EntityType
@@ -99,13 +99,13 @@
                 "entity_type" = $localEntityName
                 "properties"  = $obj | ConvertTo-PSFHashtable -Include $validProperties
             }
-            Write-PSFMessage "adding `$entity: $($entity|ConvertTo-Json -Compress -Depth 4)"
+            Write-PSFMessage "adding `$entity: $($entity|ConvertTo-Json -WarningAction SilentlyContinue -Compress -Depth 4)"
             [void]$entityList.Add($entity)
         }
     }
     end {
         Write-PSFMessage "Count of entities: $($entityList.count)"
-        Write-PSFMessage "$($entityList|ConvertTo-Json)"
+        Write-PSFMessage "$($entityList|ConvertTo-Json -WarningAction SilentlyContinue)"
         $apiCallParameter = @{
             EnableException        = $EnableException
             Connection             = $Connection
@@ -119,9 +119,9 @@
                 operation = $Operation.ToUpper()
             }
         }
-        Write-PSFMessage "`$apiCallParameter=$($apiCallParameter|ConvertTo-Json -Depth 5)"
+        Write-PSFMessage "`$apiCallParameter=$($apiCallParameter|ConvertTo-Json -WarningAction SilentlyContinue -Depth 5)"
         $result = Invoke-SMAXAPI @apiCallParameter #| Where-Object { $_.properties}
-        Write-PSFMessage "`$result=$($result|ConvertTo-Json -Depth 5)"
+        Write-PSFMessage "`$result=$($result|ConvertTo-Json -WarningAction SilentlyContinue -Depth 5)"
 
         return $result
     }

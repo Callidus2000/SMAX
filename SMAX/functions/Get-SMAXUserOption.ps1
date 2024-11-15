@@ -49,7 +49,7 @@
         Path                   = "/user-options/full/$Id"
     }
 
-    Write-PSFMessage "`$apiCallParameter=$($apiCallParameter|ConvertTo-Json)"
+    Write-PSFMessage "`$apiCallParameter=$($apiCallParameter|ConvertTo-Json -WarningAction SilentlyContinue)"
     $result = Invoke-SMAXAPI @apiCallParameter #| Where-Object { $_.properties}
     return $result
 }

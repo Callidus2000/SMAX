@@ -130,7 +130,7 @@
                 $subProperties = @()
                 foreach ($subProperty in $parsedDefinitions.$linkEntityName.properties) {
                     $subProperties += @{Text = "$($propName).$($subProperty.name)"; ToolTip = $subProperty.locName }
-                    # Write-PSFMessage "`$teppEntryProperties.`"$name.$propName`"+=$(@{Text = "$($propName).$($subProperty.name)"; ToolTip = $subProperty.locName }|ConvertTo-Json -Compress)"
+                    # Write-PSFMessage "`$teppEntryProperties.`"$name.$propName`"+=$(@{Text = "$($propName).$($subProperty.name)"; ToolTip = $subProperty.locName }|ConvertTo-Json -WarningAction SilentlyContinue -Compress)"
                 }
                 $teppEntryProperties."$name.$propName" = $subProperties
             }
@@ -163,7 +163,7 @@
         foreach($cfgName in $cfgFullNames){
             $filename = Join-Path $moduleRoot "en-us" (($cfgName -replace "SMAX.") + '.json')
             Write-PSFMessage -Level Host "Exporting PSFConfig $cfgName to $filename"
-            Get-PSFConfigValue -FullName $cfgName|ConvertTo-Json -Depth 10 |Out-File -FilePath $filename -Force
+            Get-PSFConfigValue -FullName $cfgName|ConvertTo-Json -WarningAction SilentlyContinue -Depth 10 |Out-File -FilePath $filename -Force
         }
     }
 }

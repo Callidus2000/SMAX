@@ -62,9 +62,9 @@
         Path                   = "/collaboration/comments/$EntityType/$Id/$($Comment.Id)"
         body                   = $Comment|ConvertTo-PSFHashtable
     }
-    Write-PSFMessage "`$apiCallParameter=$($apiCallParameter|ConvertTo-Json -Depth 5)"
+    Write-PSFMessage "`$apiCallParameter=$($apiCallParameter|ConvertTo-Json -WarningAction SilentlyContinue -Depth 5)"
     $result = Invoke-SMAXAPI @apiCallParameter #| Where-Object { $_.properties}
-    Write-PSFMessage "`$result=$($result|ConvertTo-Json -Depth 5)"
+    Write-PSFMessage "`$result=$($result|ConvertTo-Json -WarningAction SilentlyContinue -Depth 5)"
 
     return $result
 }

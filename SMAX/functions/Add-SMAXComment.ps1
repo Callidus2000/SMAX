@@ -59,11 +59,11 @@
             LoggingActionValues    = @( $commentList.Count, $Id, $EntityType)
             method                 = "POST"
             Path                   = "/collaboration/comments/bulk/$EntityType/$Id"
-            body                   = ,$commentList|ConvertTo-Json -Depth 5
+            body                   = ,$commentList|ConvertTo-Json -WarningAction SilentlyContinue -Depth 5
         }
-        Write-PSFMessage "`$apiCallParameter=$($apiCallParameter|ConvertTo-Json -Depth 5)"
+        Write-PSFMessage "`$apiCallParameter=$($apiCallParameter|ConvertTo-Json -WarningAction SilentlyContinue -Depth 5)"
         $result = Invoke-SMAXAPI @apiCallParameter #| Where-Object { $_.properties}
-        Write-PSFMessage "`$result=$($result|ConvertTo-Json -Depth 5)"
+        Write-PSFMessage "`$result=$($result|ConvertTo-Json -WarningAction SilentlyContinue -Depth 5)"
 
         # return $result
        # Invoke-SMAXBulk @bulkParameter
