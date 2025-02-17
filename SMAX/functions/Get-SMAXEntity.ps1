@@ -121,6 +121,7 @@
         Add-Member -InputObject $item.properties -MemberType NoteProperty -Name related -Value $item.related_properties
         $item.properties.PSObject.TypeNames.Insert(0, "SMAX.$($item.entity_type)")
     }
+    if ($null -eq $result){return}
     if($FlattenResult){
         return $result.properties|ConvertTo-SMAXFlatObject
     }
