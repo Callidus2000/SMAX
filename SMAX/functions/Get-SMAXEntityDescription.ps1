@@ -78,7 +78,7 @@
     $associationData = $definitions.$EntityType.associations | Select-Object name, locname, cardinality, @{name = 'details'; expression = $detailsScript } | Sort-Object -Property locname
     switch ($Mode) {
         'String' {
-            $sb = new System.Text.StringBuilder
+            $sb = New-Object System.Text.StringBuilder
             [void]$sb.AppendFormat("Entity-Type {0}", $EntityType).AppendLine()
             [void]$sb.AppendLine("Properties:")
             [void]$sb.Append(($propertyData | Format-Table -Wrap | Out-String))

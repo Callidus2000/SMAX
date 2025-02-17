@@ -77,7 +77,7 @@
         }
         'Definition'{
             $padLeft = ($propertiesToInclude.name | Measure-Object -Maximum -Property Length).Maximum
-            $sb = [System.Text.StringBuilder]::new()
+            $sb = new-object System.Text.StringBuilder
             [void]$sb.AppendLine( "`$$EntityType=@{" )
             [void]$sb.AppendFormat( "    # {0,$(-$padLeft+2)} = `"{1}`"   # Uncomment if converted to [PSCustomObject] later", @("PSTypeName", "SMAX.$EntityType") )
             [void]$sb.AppendLine(  )

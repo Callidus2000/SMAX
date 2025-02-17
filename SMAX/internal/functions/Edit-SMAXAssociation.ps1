@@ -104,7 +104,7 @@
         "singleAssociation"{
             Write-PSFMessage "SingleRelation"
             $relationships=@($newRel)
-            # $relationships = new System.Collections.ArrayList
+            # $relationships = New-Object System.Collections.ArrayList
         }
         'Bulk'{
             # if([string]::IsNullOrEmpty($BulkCacheHash)){
@@ -118,7 +118,7 @@
             }
             else{
                 Write-PSFMessage "Starting Bulk Collection $BulkID"
-                $relationships = new System.Collections.ArrayList
+                $relationships = New System.Collections.ArrayList
                 $BulkCacheHash.$BulkID = $relationships
             }
         }

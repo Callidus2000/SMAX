@@ -73,7 +73,7 @@
         [string]$Operation
     )
     begin {
-        $entityList = new System.Collections.ArrayList
+        $entityList = New-Object System.Collections.ArrayList
         $definitions = Get-PSFConfigValue -FullName "$(Get-SMAXConfPrefix -Connection $Connection).entityDefinition"
         if([string]::IsNullOrEmpty($definitions)){
             Stop-PSFFunction -EnableException $EnableException -Message "SMAX Entitymodel not initialized, please run Initialize-SMAXEntityModel"
