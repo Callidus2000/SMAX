@@ -55,8 +55,15 @@
     .PARAMETER ConvertJsonAsHashtable
         If specified, the JSON response from the API is converted into a hashtable.
 
+    .PARAMETER InFile
+        File which should be transferred during the Request.
+        See Publish-ARAHFile for usage.
+
     .PARAMETER OutFile
         Specifies a file path to which the API response is saved.
+
+    .PARAMETER RequestModifier
+        Name of a registered PSFScriptBlock which should be processed prior to the real WebRequest.
 
     .PARAMETER LoggingActionValues
         Additional values to be associated with the logging action.
@@ -88,7 +95,7 @@
         $Connection = (Get-SMAXLastConnection),
         [string]$Path,
         $Body,
-        [Hashtable] $Header,
+        [string]$ContentType,
         [Alias("Query")]
         [Hashtable] $URLParameter,
         [parameter(mandatory = $true)]
@@ -99,7 +106,10 @@
         [ValidateSet("Critical", "Important", "Output", "Host", "Significant", "VeryVerbose", "Verbose", "SomewhatVerbose", "System", "Debug", "InternalComment", "Warning")]
         [string]$LoggingLevel = (Get-PSFConfigValue -FullName "SMAX.Logging.Api" -Fallback "Verbose"),
         [switch]$ConvertJsonAsHashtable,
+        [string]$InFile,
         [string]$OutFile,
+        [string]$RequestModifier,
+        [hashtable]$Headers,
         [string[]]$LoggingActionValues = ""
     )
     if (-not $Connection) {
@@ -124,7 +134,7 @@
 
     $connection.WebSession.Cookies = [System.Net.CookieContainer]::new()
     $connection.WebSession.Cookies.Add($Connection.authCookie)
-
+    # Write-PSFMessage "`$apiCallParameter=$($apiCallParameter|ConvertTo-Json)"
 
     Invoke-PSFProtectedCommand -ActionString "APICall.$LoggingAction" -ActionStringValues (, $requestId + $LoggingActionValues) -ScriptBlock {
         $result = Invoke-ARAHRequest @apiCallParameter #-Verbose -PagingHandler 'SMAX.PagingHandler'

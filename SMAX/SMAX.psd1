@@ -27,7 +27,7 @@
 	# this module
 	RequiredModules = @(
 		@{ ModuleName='PSFramework'; ModuleVersion='1.9.310' }
-		@{ ModuleName='ARAH'; ModuleVersion='1.4.0' }
+		@{ ModuleName='ARAH'; ModuleVersion='1.5.0' }
 	)
 
 	# Assemblies that must be loaded prior to importing this module
@@ -42,6 +42,7 @@
 	# Functions to export from this module
 	FunctionsToExport = @(
 		'Add-SMAXAssociation'
+		'Add-SMAXAttachement'
 		'Add-SMAXComment'
 		'Add-SMAXEntity'
 		'Connect-SMAX'
