@@ -64,6 +64,7 @@
 		'New-SMAXComment'
 		'New-SMAXEntity'
 		'Optimize-SMAXUserOptions'
+		'Publish-SMAXAttachement'
 		'Remove-SMAXAssociation'
 		'Remove-SMAXComment'
 		'Update-SMAXComment'
