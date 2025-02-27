@@ -1,93 +1,89 @@
 ﻿function Invoke-SMAXAPI {
     <#
     .SYNOPSIS
-        Invokes the Micro Focus SMAX API to perform various operations.
+    Invokes the Micro Focus SMAX API to perform various operations.
 
     .DESCRIPTION
-        The Invoke-SMAXAPI function is used to interact with the Micro Focus SMAX
-        API to perform operations such as retrieving data, creating entities, updating
-        entities, and more. It supports various HTTP methods and provides options for
-        handling API responses.
+    The Invoke-SMAXAPI function is used to interact with the Micro Focus SMAX
+    API to perform operations such as retrieving data, creating entities,
+    updating entities, and more. It supports various HTTP methods and provides
+    options for handling API responses.
 
     .PARAMETER Connection
-        Specifies the connection to the Micro Focus SMAX server. If not provided, it
-        will use the last saved connection obtained using the Get-SMAXLastConnection
-        function.
+    Specifies the connection to the Micro Focus SMAX server. If not provided,
+    it will use the last saved connection obtained using the
+    Get-SMAXLastConnection function.
 
     .PARAMETER Path
-        Specifies the API endpoint path for the operation.
+    Specifies the API endpoint path for the operation.
 
     .PARAMETER Body
-        Specifies the request body for the API operation.
-        Hashtables are Converted to the POST body by using ConvertTo-Json -WarningAction SilentlyContinue
+    Specifies the request body for the API operation. Hashtables are converted
+    to the POST body by using ConvertTo-Json -WarningAction SilentlyContinue.
 
     .PARAMETER Header
-        Specifies custom HTTP headers for the API request.
+    Specifies custom HTTP headers for the API request.
 
     .PARAMETER URLParameter
-        Specifies URL parameters for the API request; Converted to the GET URL parameter set.
-        Example:
-        {
-            id=4
-            name=Jon Doe
-        }
-        will result in "?id=4&name=Jon%20Doe" being added to the URL Path
+    Specifies URL parameters for the API request; converted to the GET URL
+    parameter set. Example: { id=4 name=Jon Doe } will result in
+    "?id=4&name=Jon%20Doe" being added to the URL Path.
 
     .PARAMETER Method
-        Specifies the HTTP request method (e.g., GET, POST, PUT, DELETE).
+    Specifies the HTTP request method (e.g., GET, POST, PUT, DELETE).
 
     .PARAMETER EnableException
-        Indicates whether to enable exception handling. If set to $true (default),
-        the function will throw exceptions on API errors. If set to $false, it will
-        return error information as part of the result.
+    Indicates whether to enable exception handling. If set to $true (default),
+    the function will throw exceptions on API errors. If set to $false, it will
+    return error information as part of the result.
 
     .PARAMETER EnablePaging
-        Enables paging for large result sets. By default, paging is disabled.
+    Enables paging for large result sets. By default, paging is disabled.
 
     .PARAMETER LoggingAction
-        Specifies the name of the logging action for tracking purposes.
+    Specifies the name of the logging action for tracking purposes.
 
     .PARAMETER LoggingLevel
-        Specifies the logging level for the API operation. Valid values are:
-        Critical, Important, Output, Host, Significant, VeryVerbose, Verbose,
-        SomewhatVerbose, System, Debug, InternalComment, and Warning.
+    Specifies the logging level for the API operation. Valid values are:
+    Critical, Important, Output, Host, Significant, VeryVerbose, Verbose,
+    SomewhatVerbose, System, Debug, InternalComment, and Warning.
 
     .PARAMETER ConvertJsonAsHashtable
-        If specified, the JSON response from the API is converted into a hashtable.
+    If specified, the JSON response from the API is converted into a hashtable.
 
     .PARAMETER InFile
-        File which should be transferred during the Request.
-        See Publish-ARAHFile for usage.
+    File which should be transferred during the request. See Publish-SMAXAttachement
+    for usage.
 
     .PARAMETER OutFile
-        Specifies a file path to which the API response is saved.
+    Specifies a file path to which the API response is saved.
 
     .PARAMETER RequestModifier
-        Name of a registered PSFScriptBlock which should be processed prior to the real WebRequest.
+    Name of a registered PSFScriptBlock which should be processed prior to the
+    real WebRequest.
 
     .PARAMETER LoggingActionValues
-        Additional values to be associated with the logging action.
+    Additional values to be associated with the logging action.
 
     .EXAMPLE
-        $response = Invoke-SMAXAPI -Connection $MyConnection -Path "/incidents/123"
-        -Method Get
+    $response = Invoke-SMAXAPI -Connection $MyConnection -Path "/incidents/123"
+    -Method Get
 
-        Description:
-        Sends a GET request to retrieve information about incident ID 123.
+    Description:
+    Sends a GET request to retrieve information about incident ID 123.
 
     .EXAMPLE
-        $requestBody = @{
-            "Title" = "New Incident"
-            "Description" = "This is a new incident."
-        }
-        $response = Invoke-SMAXAPI -Connection $MyConnection -Path "/incidents" -Method Post
-        -Body $requestBody
+    $requestBody = @{
+    "Title" = "New Incident"
+    "Description" = "This is a new incident."
+    }
+    $response = Invoke-SMAXAPI -Connection $MyConnection -Path "/incidents"
+    -Method Post -Body $requestBody
 
-        Description:
-        Sends a POST request to create a new incident with the specified request body.
+    Description:
+    Sends a POST request to create a new incident with the specified request
+    body.
 
-    .NOTES
-        Date:   September 28, 2023
     #>
     [CmdletBinding(SupportsShouldProcess = $true, ConfirmImpact = 'Medium')]
 

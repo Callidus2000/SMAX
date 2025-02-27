@@ -1,5 +1,41 @@
 ﻿function Add-SMAXAttachement {
+    <#
+    .SYNOPSIS
+    Adds an attachment to a specified SMAX entity.
 
+    .DESCRIPTION
+    The Add-SMAXAttachement function uploads a file as an attachment to a
+    specified entity in SMAX. It supports different entity types and handles
+    existing attachments by modifying the complex type properties.
+
+    .PARAMETER Connection
+    Specifies the connection object to SMAX. If not provided, the last
+    connection is used.
+
+    .PARAMETER EnableException
+    Indicates whether to enable exceptions. Default is $true.
+
+    .PARAMETER EntityType
+    Specifies the type of the entity to which the attachment will be added.
+
+    .PARAMETER Id
+    Specifies the ID of the entity.
+
+    .PARAMETER Path
+    Specifies the path to the file to be uploaded as an attachment.
+
+    .PARAMETER AttachementProperty
+    Specifies the property of the entity where the attachment will be stored.
+    Tab Expansion included
+
+    .EXAMPLE
+    PS C:\> Add-SMAXAttachement -EntityType "Incident" -Id "12345" -Path
+    "C:\file.txt" -AttachementProperty "IncidentAttachments"
+
+    Adds the file "file.txt" as an attachment to the Incident entity with ID
+    12345.
+
+    #>
     [CmdletBinding()]
     param (
         [parameter(Mandatory = $false)]
