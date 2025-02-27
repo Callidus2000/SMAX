@@ -46,27 +46,9 @@
             "lastModified as LastUpdateTime"
         )
     )
-    # id - the guid returned in the attachment response
-    # file_name - the name returned in the attachment response
-    # file_extension - the extension from the name property above (.txt for example)
-    # size - the contentLength from the attachment response
-    # mime_type - the contentType from the attachment response
-    # Creator - the user that added the attachment, this should be the current login id/email
     Write-PSFMessage "New properties: $($newProperties |ConvertTo-Json -Compress)"
     $complexType.complexTypeProperties += [PSCustomObject]@{properties = $newProperties }
     Write-PSFMessage "complexType: $($complexType |ConvertTo-Json -Compress -Depth 5)"
     $entity.$AttachementProperty = $complexType |ConvertTo-Json -Compress -Depth 5
     $entity|Update-SMAXEntity -Connection $Connection -EntityType $EntityType
-    # @{
-    #     "properties": {
-    #         "IsHidden": false,
-    #         "size": 20,
-    #         "mime_type": "text/plain",
-    #         "LastUpdateTime": 1740564048159,
-    #         "file_name": "Dummy.txt",
-    #         "file_extension": "txt",
-    #         "id": "f7cf9797-fc4f-4eb9-82ac-6ecfe3139f3f",
-    #         "Creator": "1001683"
-    #     }
-    # }
 }
