@@ -30,7 +30,7 @@
     else {
         $complexType = @{"complexTypeProperties" = @() }
     }
-    $uploadData = Publish-SMAXAttachement -Connection $Connection -Path $Path -verbose
+    $uploadData = Publish-SMAXAttachement -Connection $Connection -Path $Path
     Write-PSFMessage "Metadata of upload: $($uploadData |ConvertTo-Json -Compress)"
     if ($null -eq $uploadData -or [string]::IsNullOrEmpty( $uploadData.guid)) {
         Stop-PSFFunction -Message "Error while uploading the attachement"

@@ -127,19 +127,56 @@
     else {
         Write-PSFMessage -Level Verbose "Wandle Connection aus OldConnection NICHT um"
     }
-    $apiCallParameter = $PSBoundParameters | ConvertTo-PSFHashtable -Exclude LoggingActionValues, RevisionNote, LoggingAction
-    if ($EnablePaging) {
-        $apiCallParameter.PagingHandler = 'SMAX.PagingHandler'
+
+    # SMAX accepts Attachement Uploads only as MultiPart Form Data, this cannot be handled by the regular helper
+    if ($InFile) {
+        # SMAX may return {"returnCode": 500,"success": false}
+        # Just retry a few times
+        Invoke-PSFProtectedCommand -Action "Uploading, if required multiple times" -ScriptBlock {
+            $ContentType = 'application/octet-stream'
+            $uri = $Connection.WebServiceRoot + $Path
+
+            $FileStream = [System.IO.FileStream]::new($InFile, [System.IO.FileMode]::Open)
+            $FileHeader = [System.Net.Http.Headers.ContentDispositionHeaderValue]::new('form-data')
+            $FileHeader.Name = 'files[]'
+            $FileHeader.FileName = Split-Path -leaf $InFile
+            $FileContent = [System.Net.Http.StreamContent]::new($FileStream)
+            $FileContent.Headers.ContentDisposition = $FileHeader
+            $FileContent.Headers.ContentType = [System.Net.Http.Headers.MediaTypeHeaderValue]::Parse($ContentType)
+
+            $MultipartContent = [System.Net.Http.MultipartFormDataContent]::new()
+            $MultipartContent.Add($FileContent)
+            $connection.WebSession.Cookies = [System.Net.CookieContainer]::new()
+            $connection.WebSession.Cookies.Add($Connection.authCookie)
+
+
+            $Response = Invoke-WebRequest -Body $MultipartContent -Method 'POST' -Uri $Uri -WebSession $connection.WebSession
+            $result = $Response.Content | ConvertFrom-Json
+                $FileStream.Close()
+                $FileStream.Dispose()
+                $MultipartContent.Dispose()
+
+            if ($false -eq $result.success) {
+                Stop-PSFFunction -Message "Upload failed, response: $($result|ConvertTo-Json -Compress)" #-Level Critical
+                # enter the loop
+                throw "Upload failed, response: $($result|ConvertTo-Json -Compress)"
+            }
+        } -RetryCount 4 -RetryWait ([timespan]::FromSeconds(1)) #-Level Host
     }
+    else {
+        # Write-PSFMessage "`$apiCallParameter=$($apiCallParameter|ConvertTo-Json)"
+        $connection.WebSession.Cookies = [System.Net.CookieContainer]::new()
+        $connection.WebSession.Cookies.Add($Connection.authCookie)
+        $apiCallParameter = $PSBoundParameters | ConvertTo-PSFHashtable -Exclude LoggingActionValues, RevisionNote, LoggingAction
+        if ($EnablePaging) {
+            $apiCallParameter.PagingHandler = 'SMAX.PagingHandler'
+        }
 
-    $connection.WebSession.Cookies = [System.Net.CookieContainer]::new()
-    $connection.WebSession.Cookies.Add($Connection.authCookie)
-    # Write-PSFMessage "`$apiCallParameter=$($apiCallParameter|ConvertTo-Json)"
+        Invoke-PSFProtectedCommand -ActionString "APICall.$LoggingAction" -ActionStringValues (, $requestId + $LoggingActionValues) -ScriptBlock {
+            $result = Invoke-ARAHRequest @apiCallParameter #-Verbose -PagingHandler 'SMAX.PagingHandler'
 
-    Invoke-PSFProtectedCommand -ActionString "APICall.$LoggingAction" -ActionStringValues (, $requestId + $LoggingActionValues) -ScriptBlock {
-        $result = Invoke-ARAHRequest @apiCallParameter #-Verbose -PagingHandler 'SMAX.PagingHandler'
-
-    } -PSCmdlet $PSCmdlet  -EnableException $false -Level $LoggingLevel
+        } -PSCmdlet $PSCmdlet  -EnableException $false -Level $LoggingLevel
+    }
     if ((Test-PSFFunctionInterrupt) -and $EnableException) {
         Throw "API-Error, statusCode: $statusCode, Message $($result.result.status.Message)" #-EnableException $true -StepsUpward 3 #-AlwaysWarning
     }
