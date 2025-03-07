@@ -1,4 +1,23 @@
-﻿Register-PSFTeppScriptblock -Name "SMAX.EntityAssociations" -ScriptBlock {
+﻿<#
+.SYNOPSIS
+Registers a PSFramework TEPP scriptblock for SMAX entity associations.
+
+.DESCRIPTION
+This function registers a TEPP scriptblock named "SMAX.EntityAssociations". It
+retrieves the connection information and fetches entity associations based on
+the provided entity type.
+
+.PARAMETER Name
+The name of the TEPP scriptblock to register.
+
+.PARAMETER ScriptBlock
+The scriptblock to register.
+
+.EXAMPLE
+Register-PSFTeppScriptblock -Name "SMAX.EntityAssociations" -ScriptBlock { ... }
+
+#>
+Register-PSFTeppScriptblock -Name "SMAX.EntityAssociations" -ScriptBlock {
     try {
         if ([string]::IsNullOrEmpty($fakeBoundParameter.Connection)) {
             $connection = Get-SMAXLastConnection -EnableException $false
