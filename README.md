@@ -146,116 +146,49 @@ The `AllowClobber` option is currently necessary because of an issue in the curr
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-The module is a wrapper for the Fortinet FortiManager API. For getting started take a look at the integrated help of the included functions. As inspiration you can take a look at the use-cases which led to the development of this module.
+The module is a wrapper for the Service Management Automation X (SMAX) API. For getting started take a look at the integrated help of the included functions. As inspiration you can take a look at the use-cases which led to the development of this module.
 
-### Currently supported firewall object types (v2.0)
-The following types of objects can handled (the list is not exhaustive):
-
-| functionPrefix | `Get-FM*` | `New-FMObj*` | `Add-FM*` | `Update-FM*` | `Rename-FM*` | `Remove-FM*` |
-| ----------- | ----------- | ----------- | ----------- | ----------- | ----------- | ----------- |
-| Address | X | X | X | X | X | X |
-| AddressGroup | X | X | X | X | X | X | 
-| FirewallPolicy | X | X | X | X | * | X | 
-| FirewallService | X | X | X | X | * | | 
-| FirewallInterfaces | X | X | X | X | X | X | 
-| DeviceInfo | X |   |   |   |   |   | 
-| Task | X |   |   |   |   |   | 
-| Firewall Hitcounts | X |   |   |   |   |   | 
-| ADOM LockStatus | X |   |   |   |   |   | 
-
-An * in Rename means there is no specific function for it, you may use the `Update-FM*` to do it manually.
-
-### Additional Meta Functions
-- `Connect-FM` - Connects to an instance
-- `Disconnect-FM` - Disconnects
-- `Get-FMAdomLockStatus` - Check if the DOM is locked
-- `Lock-FMAdom` - Lock the ADOM for changes
-- `Publish-FMAdomChange` - Publish those changes (aka `save`)
-- `Unlock-FMAdom` - Unlock to make it available for change to other users
-- `Get-FMFirewallHitCount` - How many hits does which rule get?
-- `Move-FMFirewallPolicy` - Move a policy before/after another one
-- `Convert-FMIpAddressToMaskLength` - Converts a IP Subnet-Mask to a Mask Length
-- `Convert-FMSubnetMask` - Converts a subnet mask between long and short-version
-- `Invoke-FMAPI` - The magical black box which handles the API requests
-
-## Use-Cases or Why was the module developed?
-### Background
-Our company uses the Fortinet Manager for administration of 8 production firewalls. The policies were separated into 8 policy packages and no policy package was the same. In a refactoring project we created a new firewall design based on 
-* categorizing the vlans into security levels
-* creating hierarchical address groups based on the security levels and locations
-* building new default policies based on those new objects
-
-### Part One
-First task was to import 400 new address objects from Excel. The business requirements were simple:
-* Login to the manager (**Connect-FM**)
-* Query existing addresses (**Get-FMAddress**) and address groups (**Get-FMADdressGroup**)
-* Create new objects for the API (**New-FMObjAddressGroup** and **New-FMObjAddress**) out of the excel file (Thanks to ImportExcel)
-* Lock the ADOM for writing (**Lock-FMAdom**) - **Breaking Change in v2.0.0** Provide the default RevisionNote as a parameter
-* Add the new address objects to the ADOM (**Add-FMAddress** and **Add-FMAddressGroup**)
-* Save the changes (**Publish-FMAdomChange**)
-* Unlock the ADOM after work (**UnlockFMAdom**)
-
-For testing purposes the antagonists of Add where needed (**Remove-FMAddress**, **Remove-FMAddressGroup**), and updating the objects would have been nice, too (you get it, **Update-***).
-### Part Two
-The new default address objects could be imported, the new default policy rules could be implemented... But where? We had 8 policy packages....
-
-One solution would have been to add the policies to the Global Header config... But beside the firewalls within the project scope the Manager appliance was also in charge of the main location firewalls which would receive the new policies, too. That's not desirable.
-
-New plan: 
-* Create a new policy package, add all firewall devices/vdoms to the new package
-* Create the new global policy rules
-* Foreach existing policy package
-  * Read the existing rules (**Get-FMFirewallPolicy**)
-  * Modify them (rename, add the previous "Installation Targets" as "Install On" attribute (scope member))
-  * Add the modified rule to the new policy package (**Add-FMFirewallPolicy**)
-* Apply the new Package to each VDOM
-  * The global rules would target all devices
-  * The prior copied rules would target specific VDOMs
-
-### Part three
-As the module has the ability to read/create/add Firewall policy rules, why not import the new global rules directly from excel? No problem, just had to implement the functions around Firewall Services (**Get/Add/Update-FMFirewallService**). Voila, every necessary task can be automated.
-
-# Example code
+### Example Code
+The following code should provide an idea how to use the module. Everything is highly dependable on your local entity model.
 ```Powershell
-# Connect
-$connection = Connect-FM -Credential $fortiCred -Url MyServer.MyCompany.com -verbose -Adom TEST
+# Connect to SMAX (fictional tenant 123456)
+$connection = Connect-SMAX -Credential $smaxCred -Url MyServer.MyCompany.com -verbose -TenantId "123456"
 
-# Import some data from excel
-$ipTable = Import-Excel -Path ".\ip-data.xlsx" -WorksheetName "addresses"
-$ipAddressNamesFromExcel = $ipTable | Select-Object -expandproperty "Name"
-$existingAddresses = Get-FMAddress -Connection $Connection -verbose -fields "name" | Select-Object -expandproperty name
+# Get all open Approvals as Task entities
+$approvals = Get-SMAXEntity -Connection $connection -Entity "Task" -Filter "Status eq 'Open'" -verbose
 
-$missingAddresses = $ipAddressNamesFromExcel | Where-Object { $_ -notin $existingAddresses } | Sort-Object -Unique
-Write-PSFMessage -Level Host "$($existingAddresses.count) Adresses found in Forti, $($ipAddressNamesFromExcel.count) within Excel, missing $($missingAddresses.count)"
-$newFMAddresses = @()
-foreach ($newAddress in $missingAddresses) {
-    Write-PSFMessage -Level Host "Create address object: $newAddress"
-    $newFMAddresses += New-FMObjAddress -Name "$newAddress" -Type ipmask -Subnet "$newAddress"  -Comment "Created ByScript"
+# Enrich the approvals with info from the related requests
+$enrichedApprovals = $approvals | ForEach-Object {
+    $request = Get-SMAXEntity -Connection $connection -Entity "Request" -Id $_.RequestId -verbose
+    [PSCustomObject]@{
+        ApprovalId = $_.Id
+        RequestId = $_.RequestId
+        RequestTitle = $request.Title
+        RequestDescription = $request.Description
+        ApprovalStatus = $_.Status
+    }
 }
-Lock-FMAdom -Connection $connection -RevisionNote "Changes by API"
-try {
-    $newFMAddresses | add-fmaddress -connection $connection
-    Publish-FMAdomChange -Connection $connection
-}
-catch {
-    Write-PSFMessage -Level Warning "$_"
-}
-finally {
-    UnLock-FMAdom -Connection $connection
-}
-Disconnect-FM -connection $Connection
+
+# Return it as PSCustomObjects
+$enrichedApprovals
 ```
 If you need an overview of the existing commands use
+
 ```powershell
 # List available commands
-Get-Command -Module FortiManager
+Get-Command -Module SMAX
 ```
 everything else is documented in the module itself.
+
+### Tab Completion
+
+After running `Initialize-SMAXEntityModel -Persist` the first time some Tab Completion magic is available. The module provides tab completion for various parameters and values, making it easier to use and reducing the chance of errors. To take advantage of this feature, simply press the `Tab` key while typing a command or parameter, and PowerShell will suggest possible completions based on the context. For example it provides the possible `-EntitiyType` values and the attributes (both requiring the correct case sensitivity).
+
 <!-- ROADMAP -->
 ## Roadmap
 New features will be added if any of my scripts need it ;-)
 
-I cannot guarantee that no breaking change will occur as the development follows my internal DevOps need completely. Likewise I will not insert full documentation of all parameters as I don't have time for this copy&paste. Sorry. But major changes which classify as breaking changes will result in an increment of the major version. See [Changelog](FortigateManager\changelog.md) for information regarding breaking changes.
+I cannot guarantee that no breaking change will occur as the development follows my internal DevOps need completely. Likewise I will not insert full documentation of all parameters as I don't have time for this copy&paste. Sorry. But major changes which classify as breaking changes will result in an increment of the major version. See [Changelog](SMAX\changelog.md) for information regarding breaking changes.
 
 See the [open issues](https://github.com/Callidus2000/SMAX/issues) for a list of proposed features (and known issues).
 
@@ -276,7 +209,7 @@ Short stop:
 
 
 ## Limitations
-* The module works on the ADOM level as this is the only permission set I've been granted
+* The module works on the tenant level as this is the only permission set I've been granted
 * Maybe there are some inconsistencies in the docs, which may result in a mere copy/paste marathon from my other projects
 
 <!-- LICENSE -->
@@ -315,4 +248,5 @@ Project Link: [https://github.com/Callidus2000/SMAX](https://github.com/Callidus
 [issues-url]: https://github.com/Callidus2000/SMAX/issues
 [license-shield]: https://img.shields.io/github/license/Callidus2000/SMAX.svg?style=for-the-badge
 [license-url]: https://github.com/Callidus2000/SMAX/blob/master/LICENSE
+````
 
