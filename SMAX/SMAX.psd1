@@ -3,7 +3,7 @@
 	RootModule = 'SMAX.psm1'
 
 	# Version number of this module.
-	ModuleVersion = '1.1.0'
+	ModuleVersion = '1.2.0'
 
 	# ID used to uniquely identify this module
 	GUID = '720c57b9-2d8f-4d49-a32a-9b634257c4f8'
@@ -67,6 +67,7 @@
 		'Publish-SMAXAttachement'
 		'Remove-SMAXAssociation'
 		'Remove-SMAXComment'
+		'Remove-SMAXEntity'
 		'Update-SMAXComment'
 		'Update-SMAXEntity'
 		# 'Get-SMAXMetaEntityDescription'
