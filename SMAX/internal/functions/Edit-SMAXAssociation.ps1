@@ -130,7 +130,7 @@
         'executeBulk'{
             if ([string]::IsNullOrEmpty($relationships)){
                 # Write-PSFMessage -Level Warning
-                Stop-PSFFunction -Message "No Bulk Data for '$BulkID' available" -EnableException $EnableException
+                Stop-PSFFunction -Message "No Bulk Data for '$BulkID' available" -EnableException $EnableException -Level Host
                 return
             }
         }
