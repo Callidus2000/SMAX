@@ -54,7 +54,7 @@
         Stop-PSFFunction -Message "File '$Path' does not exist"
         return
     }
-    $entity = Get-SMAXEntity -EntityType $EntityType -Id $Id -Properties Id, $AttachementProperty
+    $entity = Get-SMAXEntity -EntityType $EntityType -Id $Id -Properties Id, $AttachementProperty|Select-PSFObject -Property Id,$AttachementProperty
     if ($null -eq $entity) {
         Stop-PSFFunction -Message "Entity #$Id of Type $EntityType does not exist"
         return

@@ -13,4 +13,5 @@
 	'APICall.Remove-SMAXComment'            = '#{0}: removing comment {1} on entity {2} of type {3}'
 	'APICall.Remove-SMAXEntity'             = '#{0}: removing entities {1} of type {2}'
 	'APICall.Publish-SMAXAttachement'       = '#{0}: uploading file {1} as an attachement'
+	'APICall.Get-SMAXAttachement'           = '#{0}: downloading attachement {1} as {2}'
 }

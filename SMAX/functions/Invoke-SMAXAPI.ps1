@@ -58,6 +58,10 @@
     .PARAMETER OutFile
     Specifies a file path to which the API response is saved.
 
+    .PARAMETER PassThru
+    If set together with OutFile, the function returns the full Invoke-WebRequest
+    response object instead of returning nothing after download.
+
     .PARAMETER RequestModifier
     Name of a registered PSFScriptBlock which should be processed prior to the
     real WebRequest.
@@ -104,6 +108,7 @@
         [switch]$ConvertJsonAsHashtable,
         [string]$InFile,
         [string]$OutFile,
+        [switch]$PassThru,
         [string]$RequestModifier,
         [hashtable]$Headers,
         [string[]]$LoggingActionValues = ""
