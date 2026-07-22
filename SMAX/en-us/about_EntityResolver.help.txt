@@ -1,0 +1,76 @@
+﻿TOPIC
+	about_EntityResolver
+
+SHORT DESCRIPTION
+	Explains how Resolve-SMAXEntityInput prepares generic input for SMAX entities.
+
+LONG DESCRIPTION
+	Resolve-SMAXEntityInput converts generic property input into an ordered hashtable
+	that can be passed to Add-SMAXEntity or Update-SMAXEntity. The command uses the
+	persisted SMAX entity metadata for the supplied entity type.
+
+	INPUT TYPES
+	The InputObject parameter accepts a JSON object string, PSCustomObject, hashtable,
+	or another dictionary. It also accepts pipeline input. JSON arrays, empty JSON
+	strings, malformed JSON, and unsupported input types are rejected.
+
+	CANONICAL PROPERTY NAMES
+	Input property names are matched without case sensitivity and written with the
+	canonical SMAX property name from metadata. A property may only be supplied once.
+	For example, ImpactScope and impactscope target the same SMAX property and cannot
+	be used together.
+
+	ROOT LOOKUPS
+	Use lookup.<PropertyName> to resolve an ENTITY_LINK property from an SMAX filter.
+	The resolver reads the property's remote entity type from metadata, searches for
+	an entity, and replaces the filter with its Id. The search must return exactly one
+	entity. Zero or multiple matches cause an error.
+
+	Example:
+	@{ 'lookup.AssignedToGroup' = "Name='Operations'" } |
+	    Resolve-SMAXEntityInput -EntityType Request -Connection $connection
+
+	ENUM VALUES
+	ENUM values are validated against metadata. Values are matched without case
+	sensitivity and emitted with the exact technical SMAX spelling. For example,
+	servicedesk is normalized to ServiceDesk when it is a valid ENUM value.
+
+	USEROPTIONS LOOKUP TOKENS
+	UserOptions must be a JSON object string. The resolver walks all nested objects
+	and arrays and resolves complete string tokens matching this grammar:
+
+	{{lookup:<EntityType>|<SMAX-Filter>}}
+
+	Example token:
+	{{lookup:Location|DisplayLabel='odin Extended Zone'}}
+
+	The token must be the complete string value. A token embedded in ordinary text is
+	not changed. The entity type and filter are required, and the query must return
+	exactly one entity. The token is replaced with the resolved entity Id before the
+	UserOptions object is serialized back to compressed JSON.
+
+	HTTPYAC
+	httpYac interprets unescaped double curly braces as expressions. Escape the literal
+	braces in an httpYac request body with backslashes:
+
+	\{\{lookup:Location|DisplayLabel='odin Extended Zone'\}\}
+
+	The transport value received by Resolve-SMAXEntityInput must contain the unescaped
+	token form shown above.
+
+	EXAMPLES
+	Resolve a JSON string:
+	$json = '{"CurrentAssignment":"servicedesk"}'
+	$body = Resolve-SMAXEntityInput -InputObject $json -EntityType Request -Connection $connection
+
+	Resolve a PSCustomObject:
+	$input = [pscustomobject]@{ 'lookup.AssignedToGroup' = "Name='Operations'" }
+	$body = Resolve-SMAXEntityInput -InputObject $input -EntityType Request -Connection $connection
+
+	Resolve a hashtable through the pipeline and create an entity:
+	@{ CurrentAssignment = 'servicedesk' } |
+	    Resolve-SMAXEntityInput -EntityType Request -Connection $connection |
+	    Add-SMAXEntity -EntityType Request -Connection $connection
+
+KEYWORDS
+	SMAX, Resolve-SMAXEntityInput, Entity, Lookup, ENUM, UserOptions

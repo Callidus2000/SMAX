@@ -28,7 +28,9 @@
         What should the function return?
         'String' - A string representation
         'Properties' - All properties of the entitytype
+        'PropertiesAsHashtable' - All properties of the entitytype as hashtable
         'Associations' - All association of the entitytype
+        'AssociationsAsHashtable' - All associations of the entitytype as hashtable
 
 
     .EXAMPLE
@@ -57,7 +59,7 @@
         [parameter(mandatory = $true, ValueFromPipeline = $false, ParameterSetName = "default")]
         [PSFramework.TabExpansion.PsfArgumentCompleterAttribute("SMAX.EntityTypes")]
         [string]$EntityType,
-        [ValidateSet('String', 'Properties', 'Associations')]
+        [ValidateSet('String', 'Properties', 'Associations', 'PropertiesAsHashtable', 'AssociationsAsHashtable')]
         [string]$Mode = 'String'
     )
     $definitions = Get-PSFConfigValue -FullName "$(Get-SMAXConfPrefix -Connection $Connection).entityDefinition"
@@ -74,8 +76,28 @@
             "possible values: $($property.possibleValues|ConvertTo-Json -WarningAction SilentlyContinue -Compress)"
         }
     }
-    $propertyData = $definitions.$EntityType.properties | Select-Object name, locname, logical_type, @{name = 'details'; expression = $detailsScript } | Sort-Object -Property locname
-    $associationData = $definitions.$EntityType.associations | Select-Object name, locname, cardinality, @{name = 'details'; expression = $detailsScript } | Sort-Object -Property locname
+    $enumValidationScript = {
+        $property = $_
+        if ($property.logical_type -eq 'ENUM') {
+            $property.possibleValues
+        }
+    }
+    $remoteTypeScript = {
+        $property = $_
+        if ($property.logical_type -eq 'ENTITY_LINK') {
+            "$($property.remoteEntityName)"
+        }
+        elseif ($property.cardinality) {
+            "$($property.linkEntityName)"
+        }
+        else{
+            $null
+        }
+    }
+    $propertyData = $definitions.$EntityType.properties | Select-Object name, locname, logical_type, @{
+        name = 'details'; expression = $detailsScript
+    },@{name='remoteType'; expression = $remoteTypeScript },@{name='possibleValues'; expression = $enumValidationScript } | Sort-Object -Property locname
+    $associationData = $definitions.$EntityType.associations | Select-Object name, locname, cardinality, @{name = 'details'; expression = $detailsScript }, @{name = 'remoteType'; expression = $remoteTypeScript } | Sort-Object -Property locname
     switch ($Mode) {
         'String' {
             $sb = New-Object System.Text.StringBuilder
@@ -88,7 +110,21 @@
             return $sb.ToString()
         }
         'Properties' { return $propertyData }
+        'PropertiesAsHashtable' {
+            $propertyHashtable = @{}
+            foreach ($property in $propertyData) {
+                $propertyHashtable[$property.name] = $property
+            }
+            return $propertyHashtable
+        }
         'Associations' { return $associationData }
+        'AssociationsAsHashtable' {
+            $associationHashtable = @{}
+            foreach ($association in $associationData) {
+                $associationHashtable[$association.name] = $association
+            }
+            return $associationHashtable
+        }
     }
 
     # return $result.properties

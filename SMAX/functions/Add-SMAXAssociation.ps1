@@ -38,7 +38,7 @@
     .EXAMPLE
     Add-SMAXAssociation -EntityType Request -EntityId 400551 -Association FollowedByUsers -remoteId 388154 -BulkID MyBulk
     Add-SMAXAssociation -EntityType Request -EntityId 400551 -Association FollowedByUsers -remoteId 115 -BulkID MyBulk
-    Add-SMAXAssociation -BulkID MyBulk -ExecuteBatch
+    Add-SMAXAssociation -BulkID MyBulk -ExecuteBulk
 
     Adds the persons 388154 and 115 to the Request 400551 as a follower in a single web request.
 

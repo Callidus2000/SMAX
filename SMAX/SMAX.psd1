@@ -3,7 +3,7 @@
 	RootModule = 'SMAX.psm1'
 
 	# Version number of this module.
-	ModuleVersion = '1.2.1'
+	ModuleVersion = '1.4.0'
 
 	# ID used to uniquely identify this module
 	GUID = '720c57b9-2d8f-4d49-a32a-9b634257c4f8'
@@ -65,6 +65,7 @@
 		'New-SMAXEntity'
 		'Optimize-SMAXUserOptions'
 		'Publish-SMAXAttachement'
+		'Resolve-SMAXEntityInput'
 		'Remove-SMAXAssociation'
 		'Remove-SMAXComment'
 		'Remove-SMAXEntity'
@@ -108,7 +109,7 @@
 			# IconUri = ''
 
 			# ReleaseNotes of this module
-			# ReleaseNotes = ''
+			ReleaseNotes = 'Added Resolve-SMAXEntityInput for metadata-driven entity input normalization, root lookups, ENUM canonicalization, and UserOptions inline lookups.'
 
 		} # End of PSData hashtable
 

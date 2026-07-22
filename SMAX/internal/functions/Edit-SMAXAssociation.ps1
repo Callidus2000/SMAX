@@ -100,39 +100,34 @@
             }
         }
     }
-    switch -regex ($PSCmdlet.ParameterSetName){
-        "singleAssociation"{
+    switch ($PSCmdlet.ParameterSetName){
+        "singleAssociation" {
             Write-PSFMessage "SingleRelation"
-            $relationships=@($newRel)
+            $relationships = @($newRel)
             # $relationships = New-Object System.Collections.ArrayList
         }
-        'Bulk'{
-            # if([string]::IsNullOrEmpty($BulkCacheHash)){
-            #     Write-PSFMessage "Initialisiere `$BulkCacheHash"
-            #     $BulkCacheHash=@{}
-            #     Set-PSFTaskEngineCache
-            # }
-            if ($BulkCacheHash.containskey($BulkID)){
-                Write-PSFMessage "Using existing Bulk Collection $BulkID"
-                $relationships=$BulkCacheHash.$BulkID
+        'BuildBulk' {
+            if ($BulkCacheHash.ContainsKey($BulkID)) {
+                $relationships = $BulkCacheHash[$BulkID]
+                Write-PSFMessage "Using existing Bulk Collection $BulkID with $($relationships.Count) relationship(s)"
             }
-            else{
+            else {
+                $relationships = [System.Collections.ArrayList]::new()
+                $BulkCacheHash[$BulkID] = $relationships
                 Write-PSFMessage "Starting Bulk Collection $BulkID"
-                $relationships = New System.Collections.ArrayList
-                $BulkCacheHash.$BulkID = $relationships
             }
-        }
-        'BuildBulk'{
             [void]$relationships.add($newRel)
             Set-PSFTaskEngineCache -Module SMAX -Name "Cache.AssociationBulk" -Value $BulkCacheHash
             return
         }
-        'executeBulk'{
-            if ([string]::IsNullOrEmpty($relationships)){
+        'executeBulk' {
+            $relationships = $BulkCacheHash[$BulkID]
+            if ($null -eq $relationships -or $relationships.Count -eq 0) {
                 Write-PSFMessage  -Message "No Bulk Data for '$BulkID' available" -Level Host
                 # Stop-PSFFunction -Message "No Bulk Data for '$BulkID' available" -EnableException $EnableException -Level Host
                 return
             }
+            Write-PSFMessage "Executing Bulk Collection $BulkID with $($relationships.Count) relationship(s)"
         }
     }
     $apiCallParameter = @{

@@ -180,6 +180,41 @@ Get-Command -Module SMAX
 ```
 everything else is documented in the module itself.
 
+### Resolving Entity Input
+
+`Resolve-SMAXEntityInput` prepares generic property input before it is sent to
+`Add-SMAXEntity` or `Update-SMAXEntity`. It accepts a JSON object string,
+`PSCustomObject`, hashtable, or pipeline input. The command normalizes property
+names from SMAX metadata, resolves `lookup.<Property>` entity links, validates and
+canonicalizes ENUM values, and resolves inline lookups in `UserOptions`.
+
+```powershell
+$input = @{
+  'lookup.AssignedToGroup' = "Name='Operations'"
+  CurrentAssignment        = 'servicedesk'
+  UserOptions              = '{"complexTypeProperties":[{"properties":{"BetrieblicherStandort_c":"{{lookup:Location|DisplayLabel=''odin Extended Zone''}}"}}]}'
+}
+
+$body = $input | Resolve-SMAXEntityInput -EntityType Request -Connection $connection
+$body | Add-SMAXEntity -EntityType Request -Connection $connection
+```
+
+The `UserOptions` lookup token must occupy the complete string value and follows
+this format:
+
+```text
+{{lookup:<EntityType>|<SMAX-Filter>}}
+```
+
+When using httpYac, escape the literal braces so they are not evaluated as an
+httpYac expression:
+
+```text
+\{\{lookup:Location|DisplayLabel='odin Extended Zone'\}\}
+```
+
+For details, run `Get-Help about_EntityResolver` after importing the module.
+
 ### Tab Completion
 
 After running `Initialize-SMAXEntityModel -Persist` the first time some Tab Completion magic is available. The module provides tab completion for various parameters and values, making it easier to use and reducing the chance of errors. To take advantage of this feature, simply press the `Tab` key while typing a command or parameter, and PowerShell will suggest possible completions based on the context. For example it provides the possible `-EntitiyType` values and the attributes (both requiring the correct case sensitivity).

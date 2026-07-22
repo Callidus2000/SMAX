@@ -2,10 +2,44 @@
 	about_SMAX
 
 SHORT DESCRIPTION
-	Explains how to use the SMAX powershell module
+	Explains the SMAX PowerShell module and its core capabilities.
 
 LONG DESCRIPTION
-	<Insert Content here>
+	The SMAX module is a PowerShell wrapper for the Service Management Automation X
+	(SMAX) API. It provides commands for connecting to SMAX, reading entity metadata,
+	creating and updating entities, managing associations and comments, and working
+	with attachments and user options.
+
+	Before working with entity types and properties, create a connection with
+	Connect-SMAX. Run Initialize-SMAXEntityModel -Persist once for every tenant and
+	again whenever the SMAX entity model changes. The persisted entity model provides
+	metadata used by entity commands and tab completion.
+
+	Entity management commands include Get-SMAXEntity, Add-SMAXEntity,
+	Update-SMAXEntity, Remove-SMAXEntity, and New-SMAXEntity. Association commands
+	allow relationships between entities to be queried, created, and removed.
+	Comment and attachment commands provide access to collaboration content.
+
+	Resolve-SMAXEntityInput prepares generic property input for entity creation or
+	updates. It resolves metadata property names, entity-link lookups, ENUM values,
+	and inline lookup tokens in UserOptions. See about_EntityResolver for details.
+
+	Use Get-Command -Module SMAX to list all available module commands. Use
+	Get-Help <command name> -Full for command-specific syntax, parameters, and
+	examples. The SMAX REST API documentation is available from the vendor.
+
+	Requirements:
+	- PowerShell 5.1 or later.
+	- A SMAX account with API access.
+	- The PSFramework and ARAH dependencies declared in the module manifest.
+
+	Installation:
+	Install-Module SMAX -Force -AllowClobber
+
+	Example:
+	$connection = Connect-SMAX -Credential $credential -Url sm.example.com -TenantId 123456
+	Initialize-SMAXEntityModel -Connection $connection -Persist
+	Get-SMAXEntity -Connection $connection -EntityType Request -Properties Id, DisplayLabel
 
 KEYWORDS
-	SMAX
+	SMAX, Service Management Automation X, PowerShell, REST API
